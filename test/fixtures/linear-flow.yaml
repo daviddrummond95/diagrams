@@ -1,0 +1,24 @@
+title: "Deploy Pipeline"
+direction: TB
+
+nodes:
+  - id: build
+    label: "Build"
+    icon: "🔨"
+  - id: test
+    label: "Run Tests"
+    icon: "🧪"
+  - id: deploy
+    label: "Deploy"
+    icon: "🚀"
+  - id: monitor
+    label: "Monitor"
+    icon: "📊"
+
+edges:
+  - from: build
+    to: test
+  - from: test
+    to: deploy
+  - from: deploy
+    to: monitor

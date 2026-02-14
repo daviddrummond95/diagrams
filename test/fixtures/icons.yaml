@@ -1,0 +1,29 @@
+title: "Icon Types"
+direction: TB
+
+nodes:
+  - id: build
+    label: "Build"
+    icon: "🔨"
+  - id: github
+    label: "GitHub"
+    icon: "favicon:github.com"
+  - id: docker
+    label: "Docker"
+    icon: "docker"
+  - id: lambda
+    label: "Lambda"
+    icon: "aws:lambda"
+  - id: gcp
+    label: "GCP Compute"
+    icon: "gcp:compute"
+
+edges:
+  - from: build
+    to: github
+  - from: github
+    to: docker
+  - from: docker
+    to: lambda
+  - from: lambda
+    to: gcp

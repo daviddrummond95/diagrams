@@ -1,0 +1,9 @@
+node_modules/
+dist/
+*.png
+*.svg
+!fonts/*.svg
+!downloaded_icons/**/*.svg
+bun.lock
+diagrams
+.DS_Store

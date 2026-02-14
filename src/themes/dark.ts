@@ -1,0 +1,56 @@
+import type { ThemeConfig } from '../types.js';
+
+export const darkTheme: ThemeConfig = {
+  name: 'dark',
+  canvas: {
+    background: '#0F172A',
+  },
+  node: {
+    background: '#1E293B',
+    border: '#334155',
+    borderWidth: 1,
+    borderRadius: 12,
+    textColor: '#F1F5F9',
+    textColorSecondary: '#94A3B8',
+    fontSize: 15,
+    fontWeight: 500,
+    descriptionFontSize: 13,
+    paddingX: 24,
+    paddingY: 16,
+    minWidth: 140,
+    maxWidth: 280,
+    shadow: '0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2)',
+    icon: {
+      size: 24,
+      marginBottom: 6,
+      dominantSize: 44,
+      dominantMarginBottom: 6,
+      dominantLabelFontSize: 12,
+    },
+  },
+  edge: {
+    color: '#475569',
+    width: 1.5,
+    arrowSize: 8,
+    labelColor: '#94A3B8',
+    labelFontSize: 12,
+    labelBackground: '#1E293B',
+  },
+  spacing: {
+    rankSep: 64,
+    nodeSep: 32,
+  },
+  group: {
+    background: '#1E293B',
+    border: '#334155',
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingX: 20,
+    paddingY: 20,
+    labelFontSize: 13,
+    labelColor: '#94A3B8',
+    labelMarginBottom: 8,
+    gap: 32,
+  },
+  fontFamily: 'Inter',
+};

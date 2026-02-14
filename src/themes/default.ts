@@ -1,0 +1,56 @@
+import type { ThemeConfig } from '../types.js';
+
+export const defaultTheme: ThemeConfig = {
+  name: 'default',
+  canvas: {
+    background: '#FFFFFF',
+  },
+  node: {
+    background: '#FFFFFF',
+    border: '#E2E8F0',
+    borderWidth: 1.5,
+    borderRadius: 12,
+    textColor: '#1E293B',
+    textColorSecondary: '#64748B',
+    fontSize: 15,
+    fontWeight: 500,
+    descriptionFontSize: 13,
+    paddingX: 24,
+    paddingY: 16,
+    minWidth: 140,
+    maxWidth: 280,
+    shadow: '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06)',
+    icon: {
+      size: 24,
+      marginBottom: 6,
+      dominantSize: 44,
+      dominantMarginBottom: 6,
+      dominantLabelFontSize: 12,
+    },
+  },
+  edge: {
+    color: '#94A3B8',
+    width: 1.5,
+    arrowSize: 8,
+    labelColor: '#64748B',
+    labelFontSize: 12,
+    labelBackground: '#FFFFFF',
+  },
+  spacing: {
+    rankSep: 48,
+    nodeSep: 32,
+  },
+  group: {
+    background: '#F8FAFC',
+    border: '#E2E8F0',
+    borderWidth: 1.5,
+    borderRadius: 16,
+    paddingX: 20,
+    paddingY: 20,
+    labelFontSize: 13,
+    labelColor: '#475569',
+    labelMarginBottom: 8,
+    gap: 32,
+  },
+  fontFamily: 'Inter',
+};

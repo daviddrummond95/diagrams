@@ -1,0 +1,91 @@
+title: "Microservices Architecture"
+direction: LR
+
+nodes:
+  - id: gateway
+    label: "API Gateway"
+    icon: "🌐"
+  - id: lb
+    label: "Load Balancer"
+    icon: "⚖️"
+  - id: auth
+    label: "Auth Service"
+    icon: "🔐"
+  - id: users
+    label: "User Service"
+    icon: "👤"
+  - id: orders
+    label: "Order Service"
+    icon: "📦"
+  - id: postgres
+    label: "PostgreSQL"
+    icon: "🐘"
+  - id: redis
+    label: "Redis"
+    icon: "🔴"
+  - id: prometheus
+    label: "Prometheus"
+    icon: "📊"
+  - id: grafana
+    label: "Grafana"
+    icon: "📈"
+
+groups:
+  - id: ingress
+    label: "Ingress"
+    members: [gateway, lb]
+    direction: TB
+    style:
+      backgroundColor: "#F0F9FF"
+      borderColor: "#BAE6FD"
+      labelColor: "#0369A1"
+  - id: services
+    label: "Services"
+    members: [auth, users, orders]
+    direction: TB
+    style:
+      backgroundColor: "#F0FDF4"
+      borderColor: "#BBF7D0"
+      labelColor: "#166534"
+  - id: data
+    label: "Data Layer"
+    members: [postgres, redis]
+    direction: TB
+    style:
+      backgroundColor: "#FFF7ED"
+      borderColor: "#FED7AA"
+      labelColor: "#9A3412"
+  - id: monitoring
+    label: "Monitoring"
+    members: [prometheus, grafana]
+    direction: LR
+
+rows:
+  - [ingress, services, data]
+  - [monitoring]
+
+edges:
+  - from: gateway
+    to: lb
+  - from: lb
+    to: auth
+  - from: lb
+    to: users
+  - from: lb
+    to: orders
+  - from: auth
+    to: postgres
+  - from: users
+    to: postgres
+  - from: orders
+    to: postgres
+  - from: auth
+    to: redis
+  - from: prometheus
+    to: auth
+    label: "scrape"
+  - from: prometheus
+    to: users
+    label: "scrape"
+  - from: prometheus
+    to: grafana

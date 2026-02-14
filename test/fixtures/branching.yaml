@@ -1,0 +1,43 @@
+title: "User Registration"
+direction: TB
+
+nodes:
+  - id: start
+    label: "User visits /register"
+    shape: rounded
+  - id: form
+    label: "Fill registration form"
+    description: "Email, password, name"
+  - id: validate
+    label: "Validate input"
+  - id: error
+    label: "Show errors"
+    style:
+      borderColor: "#EF4444"
+      textColor: "#DC2626"
+  - id: save
+    label: "Save to database"
+  - id: email
+    label: "Send welcome email"
+  - id: done
+    label: "Redirect to dashboard"
+    shape: pill
+
+edges:
+  - from: start
+    to: form
+  - from: form
+    to: validate
+  - from: validate
+    to: error
+    label: "invalid"
+    style: dashed
+  - from: validate
+    to: save
+    label: "valid"
+  - from: error
+    to: form
+  - from: save
+    to: email
+  - from: email
+    to: done

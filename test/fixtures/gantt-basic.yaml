@@ -1,0 +1,51 @@
+type: gantt
+title: "Project Timeline"
+
+tasks:
+  - id: design
+    label: "Design Phase"
+    start: "2024-01-01"
+    end: "2024-02-15"
+    color: "#4F46E5"
+    group: "Phase 1"
+    progress: 100
+  - id: prototype
+    label: "Prototype"
+    start: "2024-01-15"
+    end: "2024-03-01"
+    color: "#0EA5E9"
+    group: "Phase 1"
+    progress: 80
+    dependencies: [design]
+  - id: backend
+    label: "Backend Dev"
+    start: "2024-03-01"
+    end: "2024-05-15"
+    color: "#10B981"
+    group: "Phase 2"
+    progress: 60
+    dependencies: [prototype]
+  - id: frontend
+    label: "Frontend Dev"
+    start: "2024-03-15"
+    end: "2024-06-01"
+    color: "#F59E0B"
+    group: "Phase 2"
+    progress: 40
+    dependencies: [prototype]
+  - id: testing
+    label: "QA Testing"
+    start: "2024-05-15"
+    end: "2024-07-01"
+    color: "#EF4444"
+    group: "Phase 3"
+    progress: 10
+    dependencies: [backend, frontend]
+  - id: launch
+    label: "Launch"
+    start: "2024-07-01"
+    end: "2024-07-15"
+    color: "#8B5CF6"
+    group: "Phase 3"
+    progress: 0
+    dependencies: [testing]

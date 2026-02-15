@@ -1,13 +1,16 @@
-import type { DiagramSpec, RenderOptions } from './types.js';
+import type { AnyDiagramSpec, RenderOptions } from './types.js';
 import { validate } from './validate.js';
 import { renderDiagram } from './render/index.js';
 
 export async function diagram(
-  spec: DiagramSpec,
+  spec: AnyDiagramSpec,
   options: RenderOptions = {},
 ): Promise<string | Buffer> {
-  // Defaults
-  spec.direction = spec.direction ?? 'TB';
+  // Defaults for flow type
+  if (!spec.type || spec.type === 'flow') {
+    const flowSpec = spec as import('./types.js').DiagramSpec;
+    flowSpec.direction = flowSpec.direction ?? 'TB';
+  }
 
   const errors = validate(spec);
   if (errors.length > 0) {
@@ -36,4 +39,20 @@ export type {
   EdgeStyle,
   Direction,
   OutputFormat,
+  DiagramType,
+  AnyDiagramSpec,
+  GanttSpec,
+  GanttTask,
+  GanttLayoutResult,
+  GanttTheme,
+  TimelineSpec,
+  TimelineEvent,
+  TimelineLayoutResult,
+  TimelineTheme,
+  QuadrantSpec,
+  QuadrantAxis,
+  QuadrantDef,
+  QuadrantItem,
+  QuadrantLayoutResult,
+  QuadrantTheme,
 } from './types.js';

@@ -5,7 +5,7 @@ import { basename, extname, resolve } from 'path';
 import { parseSpec } from './parse.js';
 import { validate } from './validate.js';
 import { renderDiagram } from './render/index.js';
-import type { OutputFormat, Direction } from './types.js';
+import type { OutputFormat, Direction, DiagramSpec } from './types.js';
 
 function readStdin(): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -20,7 +20,7 @@ const program = new Command();
 
 program
   .name('diagrams')
-  .description('Generate beautiful flow diagrams from declarative specs')
+  .description('Generate beautiful diagrams from declarative specs (flow, gantt, timeline, quadrant)')
   .version('0.1.0');
 
 program
@@ -47,9 +47,9 @@ program
       // Parse
       const spec = parseSpec(content);
 
-      // Override direction if specified
-      if (opts.direction) {
-        spec.direction = opts.direction as Direction;
+      // Override direction if specified (only for flow/timeline)
+      if (opts.direction && ('direction' in spec)) {
+        (spec as DiagramSpec).direction = opts.direction as Direction;
       }
 
       // Override theme if specified
@@ -112,8 +112,18 @@ program
       const errors = validate(spec);
 
       if (errors.length === 0) {
-        console.log('Valid diagram spec ✓');
-        console.log(`  ${spec.nodes.length} nodes, ${spec.edges.length} edges`);
+        const type = spec.type ?? 'flow';
+        console.log(`Valid ${type} diagram spec ✓`);
+        if (type === 'flow') {
+          const flowSpec = spec as DiagramSpec;
+          console.log(`  ${flowSpec.nodes.length} nodes, ${flowSpec.edges.length} edges`);
+        } else if (type === 'gantt') {
+          console.log(`  ${(spec as any).tasks.length} tasks`);
+        } else if (type === 'timeline') {
+          console.log(`  ${(spec as any).events.length} events`);
+        } else if (type === 'quadrant') {
+          console.log(`  ${(spec as any).items.length} items`);
+        }
       } else {
         console.error('Validation errors:');
         errors.forEach(e => console.error(`  - ${e}`));

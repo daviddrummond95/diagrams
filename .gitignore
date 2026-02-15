@@ -10,8 +10,8 @@ bun.lock
 *.node
 
 # Compiled CLI binaries
-diagrams
-diagrams-*
+/diagrams
+/diagrams-*
 *.exe
 
 # Env

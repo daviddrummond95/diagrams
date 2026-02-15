@@ -1,0 +1,46 @@
+type: quadrant
+title: "Priority Matrix"
+
+xAxis:
+  label: "Effort"
+  low: "Low"
+  high: "High"
+
+yAxis:
+  label: "Impact"
+  low: "Low"
+  high: "High"
+
+quadrants:
+  - label: "Quick Wins"
+    position: top-left
+    color: "#22C55E"
+  - label: "Major Projects"
+    position: top-right
+    color: "#3B82F6"
+  - label: "Fill-ins"
+    position: bottom-left
+    color: "#EAB308"
+  - label: "Thankless Tasks"
+    position: bottom-right
+    color: "#EF4444"
+
+items:
+  - label: "Update docs"
+    x: 0.2
+    y: 0.8
+  - label: "New auth system"
+    x: 0.85
+    y: 0.9
+  - label: "Fix typos"
+    x: 0.1
+    y: 0.15
+  - label: "Migrate DB"
+    x: 0.9
+    y: 0.2
+  - label: "Add dark mode"
+    x: 0.5
+    y: 0.7
+  - label: "Cache layer"
+    x: 0.6
+    y: 0.5

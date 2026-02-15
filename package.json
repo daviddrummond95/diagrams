@@ -1,6 +1,6 @@
 {
   "name": "@agent-clis/diagrams",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Generate beautiful architecture diagrams from declarative YAML specs",
   "type": "module",
   "main": "./dist/index.js",
@@ -21,8 +21,8 @@
   "scripts": {
     "dev": "bun run src/cli.ts",
     "build": "bun run build:sdk && bun run build:cli:js",
-    "build:sdk": "bun build ./src/index.ts --outdir ./dist --target node && tsc --emitDeclarationOnly",
-    "build:cli:js": "bun build ./src/cli.ts --outdir ./dist --target node --entry-naming cli.js",
+    "build:sdk": "bun build ./src/index.ts --outdir ./dist --target node --external @resvg/resvg-js && tsc --emitDeclarationOnly",
+    "build:cli:js": "bun build ./src/cli.ts --outdir ./dist --target node --entry-naming cli.js --external @resvg/resvg-js",
     "build:cli": "bun build ./src/cli.ts --compile --outfile diagrams",
     "build:cli:linux-x64": "bun build ./src/cli.ts --compile --target=bun-linux-x64 --outfile diagrams-linux-x64",
     "build:cli:linux-arm64": "bun build ./src/cli.ts --compile --target=bun-linux-arm64 --outfile diagrams-linux-arm64",

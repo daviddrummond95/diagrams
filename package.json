@@ -1,6 +1,6 @@
 {
   "name": "@agent-clis/diagrams",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Generate beautiful architecture diagrams from declarative YAML specs",
   "type": "module",
   "main": "./dist/index.js",

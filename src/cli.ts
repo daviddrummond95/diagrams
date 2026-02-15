@@ -6,6 +6,7 @@ import { parseSpec } from './parse.js';
 import { validate } from './validate.js';
 import { renderDiagram } from './render/index.js';
 import type { OutputFormat, Direction, DiagramSpec } from './types.js';
+import { themes } from './themes/index.js';
 
 function readStdin(): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -29,7 +30,7 @@ program
   .argument('<input>', 'Input file path (.yaml, .yml, .json) or "-" for stdin')
   .option('-o, --output <path>', 'Output file path')
   .option('-f, --format <format>', 'Output format: png, svg, html, pptx', 'png')
-  .option('-t, --theme <theme>', 'Theme: default, dark', 'default')
+  .option('-t, --theme <theme>', 'Theme name (run "diagrams themes" to list)', 'default')
   .option('-w, --width <number>', 'Canvas width in pixels')
   .option('-s, --scale <number>', 'Scale factor for PNG output', '2')
   .option('-d, --direction <dir>', 'Flow direction: TB, LR')
@@ -139,9 +140,37 @@ program
   .command('themes')
   .description('List available themes')
   .action(() => {
-    console.log('Available themes:');
-    console.log('  default  Clean modern light theme');
-    console.log('  dark     Dark mode theme');
+    const descriptions: Record<string, string> = {
+      'default':              'Clean modern light theme',
+      'dark':                 'Dark mode with navy background',
+      'ocean':                'Deep blue tones',
+      'sunset':               'Warm orange palette',
+      'forest':               'Fresh green palette',
+      'lavender':             'Soft purple tones',
+      'rose':                 'Pink and crimson palette',
+      'corporate':            'Clean professional with slate grays',
+      'midnight':             'Ultra-dark slate background',
+      'nord':                 'Arctic color palette',
+      'solarized-light':      'Solarized light color scheme',
+      'solarized-dark':       'Solarized dark color scheme',
+      'neon':                 'Black with bright green accents',
+      'cyberpunk':            'Purple, magenta, and cyan neon',
+      'dracula':              'Dark purple Dracula palette',
+      'monokai':              'Dark editor-inspired palette',
+      'monochrome':           'Minimal grayscale',
+      'blueprint':            'Blue on blue technical drawing',
+      'ink':                  'Hand-drawn ink on parchment',
+      'pastel':               'Soft warm pastels',
+      'high-contrast':        'Black and white (dark)',
+      'high-contrast-light':  'Black and white (light)',
+    };
+
+    console.log('Available themes:\n');
+    const maxLen = Math.max(...Object.keys(descriptions).map(k => k.length));
+    for (const [name, desc] of Object.entries(descriptions)) {
+      console.log(`  ${name.padEnd(maxLen + 2)}${desc}`);
+    }
+    console.log(`\nUsage: diagrams render spec.yaml --theme <name>`);
   });
 
 program.parse();

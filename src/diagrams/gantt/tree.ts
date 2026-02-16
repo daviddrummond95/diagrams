@@ -1,9 +1,10 @@
-import type { GanttSpec, GanttLayoutResult, ThemeConfig, SatoriElement } from '../../types.js';
+import type { GanttSpec, GanttLayoutResult, ThemeConfig, RenderOptions, SatoriElement } from '../../types.js';
 
 export function buildGanttTree(
   spec: GanttSpec,
   layout: GanttLayoutResult,
   theme: ThemeConfig,
+  options: RenderOptions = {},
 ): SatoriElement {
   const gt = theme.gantt;
   const barRadius = gt?.barRadius ?? 6;
@@ -213,7 +214,8 @@ export function buildGanttTree(
   }
 
   // Title
-  if (spec.title) {
+  const showTitle = options.showTitle !== false;
+  if (spec.title && showTitle) {
     children.unshift({
       type: 'div',
       props: {
@@ -234,17 +236,22 @@ export function buildGanttTree(
     });
   }
 
+  const isTransparent = options.background === 'transparent';
+  const rootStyle: Record<string, unknown> = {
+    position: 'relative' as const,
+    display: 'flex' as const,
+    width: layout.width,
+    height: layout.height,
+    fontFamily: theme.fontFamily,
+  };
+  if (!isTransparent) {
+    rootStyle.backgroundColor = theme.canvas.background;
+  }
+
   return {
     type: 'div',
     props: {
-      style: {
-        position: 'relative' as const,
-        display: 'flex' as const,
-        width: layout.width,
-        height: layout.height,
-        backgroundColor: theme.canvas.background,
-        fontFamily: theme.fontFamily,
-      },
+      style: rootStyle,
       children,
     },
   };

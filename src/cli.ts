@@ -35,7 +35,9 @@ program
   .option('-s, --scale <number>', 'Scale factor for PNG output', '2')
   .option('-d, --direction <dir>', 'Flow direction: TB, LR')
   .option('-p, --padding <number>', 'Padding around diagram in pixels', '40')
-  .action(async (input: string, opts: Record<string, string>) => {
+  .option('--no-background', 'Transparent background (no canvas color)')
+  .option('--no-title', 'Suppress diagram title')
+  .action(async (input: string, opts: Record<string, any>) => {
     try {
       // Read input
       let content: string;
@@ -70,8 +72,10 @@ program
       const result = await renderDiagram(spec, {
         format,
         width: opts.width ? parseInt(opts.width) : undefined,
-        scale: parseFloat(opts.scale),
-        padding: parseInt(opts.padding),
+        scale: parseFloat(opts.scale as string),
+        padding: parseInt(opts.padding as string),
+        background: opts.background === false ? 'transparent' : undefined,
+        showTitle: opts.title !== false ? undefined : false,
       });
 
       // Determine output path

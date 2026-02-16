@@ -1,9 +1,10 @@
-import type { QuadrantSpec, QuadrantLayoutResult, ThemeConfig, SatoriElement } from '../../types.js';
+import type { QuadrantSpec, QuadrantLayoutResult, ThemeConfig, RenderOptions, SatoriElement } from '../../types.js';
 
 export function buildQuadrantTree(
   spec: QuadrantSpec,
   layout: QuadrantLayoutResult,
   theme: ThemeConfig,
+  options: RenderOptions = {},
 ): SatoriElement {
   const qt = theme.quadrant;
   const dotSize = qt?.dotSize ?? 12;
@@ -213,7 +214,8 @@ export function buildQuadrantTree(
   }
 
   // Title
-  if (spec.title) {
+  const showTitle = options.showTitle !== false;
+  if (spec.title && showTitle) {
     children.unshift({
       type: 'div',
       props: {
@@ -234,17 +236,22 @@ export function buildQuadrantTree(
     });
   }
 
+  const isTransparent = options.background === 'transparent';
+  const rootStyle: Record<string, unknown> = {
+    position: 'relative' as const,
+    display: 'flex' as const,
+    width: layout.width,
+    height: layout.height,
+    fontFamily: theme.fontFamily,
+  };
+  if (!isTransparent) {
+    rootStyle.backgroundColor = theme.canvas.background;
+  }
+
   return {
     type: 'div',
     props: {
-      style: {
-        position: 'relative' as const,
-        display: 'flex' as const,
-        width: layout.width,
-        height: layout.height,
-        backgroundColor: theme.canvas.background,
-        fontFamily: theme.fontFamily,
-      },
+      style: rootStyle,
       children,
     },
   };

@@ -1,9 +1,9 @@
 import pptxgen from 'pptxgenjs';
-import type { QuadrantSpec, QuadrantLayoutResult, ThemeConfig } from '../../types.js';
+import type { QuadrantSpec, QuadrantLayoutResult, ThemeConfig, RenderOptions } from '../../types.js';
 
 const SLIDE_W = 13.33;
 const SLIDE_H = 7.5;
-const MARGIN = 0.5;
+const MARGIN = 0.3;
 const PX_PER_INCH = 96;
 
 function hex(color: string): string {
@@ -18,6 +18,7 @@ export async function renderQuadrantToPptx(
   spec: QuadrantSpec,
   layout: QuadrantLayoutResult,
   theme: ThemeConfig,
+  options: RenderOptions = {},
 ): Promise<Buffer> {
   const pptx = new pptxgen();
   pptx.layout = 'LAYOUT_WIDE';
@@ -26,7 +27,7 @@ export async function renderQuadrantToPptx(
   const diagramH = layout.height / PX_PER_INCH;
   const availW = SLIDE_W - MARGIN * 2;
   const availH = SLIDE_H - MARGIN * 2;
-  const scale = Math.min(1, availW / diagramW, availH / diagramH);
+  const scale = Math.min(1.5, availW / diagramW, availH / diagramH);
 
   const scaledW = diagramW * scale;
   const scaledH = diagramH * scale;
@@ -37,11 +38,16 @@ export async function renderQuadrantToPptx(
   const x = (v: number) => offsetX + px(v);
   const y = (v: number) => offsetY + px(v);
 
+  const isTransparent = options.background === 'transparent';
+  const showTitle = options.showTitle !== false;
+
   const slide = pptx.addSlide();
-  slide.background = { color: hex(theme.canvas.background) };
+  if (!isTransparent) {
+    slide.background = { color: hex(theme.canvas.background) };
+  }
 
   // Title
-  if (spec.title) {
+  if (spec.title && showTitle) {
     slide.addText(spec.title, {
       x: 0, y: 0.15, w: SLIDE_W, h: 0.4,
       fontSize: 18, fontFace: theme.fontFamily,

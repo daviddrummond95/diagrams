@@ -1,9 +1,10 @@
-import type { TimelineSpec, TimelineLayoutResult, ThemeConfig, SatoriElement } from '../../types.js';
+import type { TimelineSpec, TimelineLayoutResult, ThemeConfig, RenderOptions, SatoriElement } from '../../types.js';
 
 export function buildTimelineTree(
   spec: TimelineSpec,
   layout: TimelineLayoutResult,
   theme: ThemeConfig,
+  options: RenderOptions = {},
 ): SatoriElement {
   const tt = theme.timeline;
   const lineColor = tt?.lineColor ?? theme.edge.color;
@@ -177,7 +178,8 @@ export function buildTimelineTree(
   }
 
   // Title
-  if (spec.title) {
+  const showTitle = options.showTitle !== false;
+  if (spec.title && showTitle) {
     children.unshift({
       type: 'div',
       props: {
@@ -198,17 +200,22 @@ export function buildTimelineTree(
     });
   }
 
+  const isTransparent = options.background === 'transparent';
+  const rootStyle: Record<string, unknown> = {
+    position: 'relative' as const,
+    display: 'flex' as const,
+    width: layout.width,
+    height: layout.height,
+    fontFamily: theme.fontFamily,
+  };
+  if (!isTransparent) {
+    rootStyle.backgroundColor = theme.canvas.background;
+  }
+
   return {
     type: 'div',
     props: {
-      style: {
-        position: 'relative' as const,
-        display: 'flex' as const,
-        width: layout.width,
-        height: layout.height,
-        backgroundColor: theme.canvas.background,
-        fontFamily: theme.fontFamily,
-      },
+      style: rootStyle,
       children,
     },
   };

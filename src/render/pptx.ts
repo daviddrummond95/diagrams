@@ -1,9 +1,10 @@
 import pptxgen from 'pptxgenjs';
-import type { DiagramSpec, LayoutResult, ThemeConfig } from '../types.js';
+import type { DiagramSpec, LayoutResult, ThemeConfig, RenderOptions } from '../types.js';
+import { svgPathToPptxShape } from './pptx-utils.js';
 
 const SLIDE_W = 13.33;
 const SLIDE_H = 7.5;
-const MARGIN = 0.5;
+const MARGIN = 0.3;
 const PX_PER_INCH = 96;
 
 /** Strip leading '#' from hex colors (pptxgenjs wants bare hex). */
@@ -47,6 +48,7 @@ export async function renderToPptx(
   spec: DiagramSpec,
   layout: LayoutResult,
   theme: ThemeConfig,
+  options: RenderOptions = {},
 ): Promise<Buffer> {
   const pptx = new pptxgen();
   pptx.layout = 'LAYOUT_WIDE'; // 13.33 x 7.5 inches
@@ -56,7 +58,7 @@ export async function renderToPptx(
   const diagramH = layout.height / PX_PER_INCH;
   const availW = SLIDE_W - MARGIN * 2;
   const availH = SLIDE_H - MARGIN * 2;
-  const scale = Math.min(1, availW / diagramW, availH / diagramH);
+  const scale = Math.min(1.5, availW / diagramW, availH / diagramH);
 
   // Offset to center diagram on slide
   const scaledW = diagramW * scale;
@@ -68,11 +70,16 @@ export async function renderToPptx(
   const x = (v: number) => offsetX + px(v);
   const y = (v: number) => offsetY + px(v);
 
+  const isTransparent = options.background === 'transparent';
+  const showTitle = options.showTitle !== false;
+
   const slide = pptx.addSlide();
-  slide.background = { color: hex(theme.canvas.background) };
+  if (!isTransparent) {
+    slide.background = { color: hex(theme.canvas.background) };
+  }
 
   // --- Title ---
-  if (spec.title) {
+  if (spec.title && showTitle) {
     slide.addText(spec.title, {
       x: 0,
       y: 0.15,
@@ -122,7 +129,7 @@ export async function renderToPptx(
     }
   }
 
-  // --- Edges ---
+  // --- Edges (curved bezier paths) ---
   const edgeByKey = new Map(
     spec.edges.map(e => [`${e.from}->${e.to}`, e]),
   );
@@ -132,38 +139,22 @@ export async function renderToPptx(
     const edgeColor = hex(edgeSpec?.color ?? theme.edge.color);
     const edgeDash = dashType(edgeSpec?.style);
 
-    // Parse start/end from pathData: "M sx sy ..." ending with "... ex ey"
-    const nums = route.pathData.match(/-?[\d.]+/g)?.map(Number);
-    if (!nums || nums.length < 4) continue;
+    const shape = svgPathToPptxShape(route.pathData, x, y, px);
+    if (!shape) continue;
 
-    const startX = nums[0];
-    const startY = nums[1];
-    const endX = nums[nums.length - 2];
-    const endY = nums[nums.length - 1];
-
-    // pptxgenjs line: x,y is top-left of bounding box; w,h is extent
-    const lx = Math.min(startX, endX);
-    const ly = Math.min(startY, endY);
-    const lw = Math.abs(endX - startX);
-    const lh = Math.abs(endY - startY);
-
-    // flipH/flipV to control direction
-    const flipH = endX < startX;
-    const flipV = endY < startY;
-
-    slide.addShape(pptx.ShapeType.line, {
-      x: x(lx),
-      y: y(ly),
-      w: px(lw) || 0.01, // avoid zero
-      h: px(lh) || 0.01,
-      flipH,
-      flipV,
+    slide.addShape('custGeom' as any, {
+      x: shape.x,
+      y: shape.y,
+      w: shape.w,
+      h: shape.h,
+      points: shape.points as any,
       line: {
         color: edgeColor,
         width: theme.edge.width,
         dashType: edgeDash,
         endArrowType: 'triangle',
       },
+      fill: { type: 'none' },
     });
 
     // Edge label
@@ -220,7 +211,7 @@ export async function renderToPptx(
         color: textColor,
         bold: !isIconVariant,
         align: 'center',
-
+        breakLine: !!node.description,
       },
     });
 
@@ -232,7 +223,6 @@ export async function renderToPptx(
           fontFace: theme.fontFamily,
           color: hex(theme.node.textColorSecondary),
           align: 'center',
-  
         },
       });
     }
@@ -299,7 +289,7 @@ export async function renderToPptx(
         rectRadius: shape === 'diamond' ? undefined : rectRadius,
         valign: 'middle',
         align: 'center',
-        margin: [toInches(theme.node.paddingY, scale) * 72, toInches(theme.node.paddingX, scale) * 72, toInches(theme.node.paddingY, scale) * 72, toInches(theme.node.paddingX, scale) * 72],
+        margin: [4, 8, 4, 8],
       });
     }
   }
@@ -307,3 +297,4 @@ export async function renderToPptx(
   const output = await pptx.write({ outputType: 'nodebuffer' });
   return Buffer.from(output as ArrayBuffer);
 }
+

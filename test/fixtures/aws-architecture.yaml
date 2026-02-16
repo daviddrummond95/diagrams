@@ -1,0 +1,116 @@
+title: "AWS Cloud Architecture"
+direction: LR
+
+nodes:
+  - id: route53
+    label: "Route 53"
+    icon: "aws:route-53"
+    variant: icon
+  - id: cloudfront
+    label: "CloudFront"
+    icon: "aws:cloudfront"
+    variant: icon
+  - id: alb
+    label: "Load Balancer"
+    icon: "aws:elastic-load-balancing"
+    variant: icon
+  - id: ecs
+    label: "ECS Fargate"
+    icon: "aws:ecs"
+    variant: icon
+  - id: lambda
+    label: "Lambda"
+    icon: "aws:lambda"
+    variant: icon
+  - id: api-gw
+    label: "API Gateway"
+    icon: "aws:api-gateway"
+    variant: icon
+  - id: rds
+    label: "Aurora DB"
+    icon: "aws:aurora"
+    variant: icon
+  - id: elasticache
+    label: "ElastiCache"
+    icon: "aws:elasticache"
+    variant: icon
+  - id: s3
+    label: "S3 Bucket"
+    icon: "aws:s3"
+    variant: icon
+  - id: cloudwatch
+    label: "CloudWatch"
+    icon: "aws:cloudwatch"
+    variant: icon
+  - id: cognito
+    label: "Cognito"
+    icon: "aws:cognito"
+    variant: icon
+  - id: sqs
+    label: "SQS"
+    icon: "aws:sqs"
+    variant: icon
+
+groups:
+  - id: edge
+    label: "Edge"
+    members: [route53, cloudfront]
+    direction: TB
+    style:
+      backgroundColor: "#F0F9FF"
+      borderColor: "#BAE6FD"
+      labelColor: "#0369A1"
+  - id: compute
+    label: "Compute"
+    members: [alb, ecs, lambda]
+    direction: TB
+    style:
+      backgroundColor: "#FFF7ED"
+      borderColor: "#FED7AA"
+      labelColor: "#9A3412"
+  - id: api
+    label: "API Layer"
+    members: [api-gw, cognito]
+    direction: TB
+    style:
+      backgroundColor: "#F0FDF4"
+      borderColor: "#BBF7D0"
+      labelColor: "#166534"
+  - id: data
+    label: "Data"
+    members: [rds, elasticache, s3, sqs]
+    direction: TB
+    style:
+      backgroundColor: "#FAF5FF"
+      borderColor: "#E9D5FF"
+      labelColor: "#7E22CE"
+
+rows:
+  - [edge, compute, data]
+  - [api]
+
+edges:
+  - from: route53
+    to: cloudfront
+  - from: cloudfront
+    to: alb
+  - from: alb
+    to: ecs
+  - from: ecs
+    to: rds
+  - from: ecs
+    to: elasticache
+  - from: ecs
+    to: s3
+  - from: api-gw
+    to: lambda
+  - from: cognito
+    to: api-gw
+  - from: lambda
+    to: sqs
+  - from: lambda
+    to: rds
+  - from: cloudwatch
+    to: ecs
+    label: "monitor"
+    style: dashed

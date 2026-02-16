@@ -1,4 +1,4 @@
-import type { DiagramSpec, ThemeConfig, LayoutResult, SatoriElement } from '../types.js';
+import type { DiagramSpec, ThemeConfig, LayoutResult, RenderOptions, SatoriElement } from '../types.js';
 import { renderNode } from './nodes.js';
 import { renderEdges } from './edges.js';
 import { renderGroupCard } from './groups.js';
@@ -10,9 +10,12 @@ export function buildTree(
   spec: DiagramSpec,
   layoutResult: LayoutResult,
   theme: ThemeConfig,
+  options: RenderOptions = {},
 ): SatoriElement {
   const { nodes: positions, edges, width, height } = layoutResult;
   const nodeMap = new Map(spec.nodes.map(n => [n.id, n]));
+  const showTitle = options.showTitle !== false;
+  const isTransparent = options.background === 'transparent';
 
   const children: SatoriElement[] = [];
 
@@ -34,7 +37,7 @@ export function buildTree(
   }
 
   // Title
-  if (spec.title) {
+  if (spec.title && showTitle) {
     children.unshift({
       type: 'div',
       props: {
@@ -55,17 +58,21 @@ export function buildTree(
     });
   }
 
+  const rootStyle: Record<string, unknown> = {
+    position: 'relative' as const,
+    display: 'flex' as const,
+    width,
+    height,
+    fontFamily: theme.fontFamily,
+  };
+  if (!isTransparent) {
+    rootStyle.backgroundColor = theme.canvas.background;
+  }
+
   return {
     type: 'div',
     props: {
-      style: {
-        position: 'relative' as const,
-        display: 'flex' as const,
-        width,
-        height,
-        backgroundColor: theme.canvas.background,
-        fontFamily: theme.fontFamily,
-      },
+      style: rootStyle,
       children,
     },
   };

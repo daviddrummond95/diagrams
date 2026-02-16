@@ -31,11 +31,11 @@ export async function renderDiagram(
 
   switch (type) {
     case 'quadrant':
-      return renderQuadrant(spec as QuadrantSpec, theme, format, padding, scale, options.width);
+      return renderQuadrant(spec as QuadrantSpec, theme, format, padding, scale, options);
     case 'timeline':
-      return renderTimeline(spec as TimelineSpec, theme, format, padding, scale, options.width);
+      return renderTimeline(spec as TimelineSpec, theme, format, padding, scale, options);
     case 'gantt':
-      return renderGantt(spec as GanttSpec, theme, format, padding, scale, options.width);
+      return renderGantt(spec as GanttSpec, theme, format, padding, scale, options);
     case 'flow':
     default:
       return renderFlow(spec as DiagramSpec, theme, format, padding, scale, options);
@@ -56,16 +56,15 @@ async function renderFlow(
   }));
 
   const result = layoutWithGroups(spec, theme, padding);
-
-  if (format === 'pptx') {
-    return renderToPptx(spec, result, theme);
-  }
-
   const width = options.width ?? result.width;
   const height = result.height;
-  const tree = buildTree(spec, result, theme);
+  const tree = buildTree(spec, result, theme, options);
 
-  return rasterize(tree, width, height, format, scale);
+  if (format === 'pptx') {
+    return renderToPptx(spec, result, theme, options);
+  }
+
+  return rasterize(tree, width, height, format, scale, options);
 }
 
 async function renderQuadrant(
@@ -74,17 +73,17 @@ async function renderQuadrant(
   format: string,
   padding: number,
   scale: number,
-  overrideWidth?: number,
+  options: RenderOptions,
 ): Promise<string | Buffer> {
   const layout = layoutQuadrant(spec, theme, padding);
+  const tree = buildQuadrantTree(spec, layout, theme, options);
+  const width = options.width ?? layout.width;
 
   if (format === 'pptx') {
-    return renderQuadrantToPptx(spec, layout, theme);
+    return renderQuadrantToPptx(spec, layout, theme, options);
   }
 
-  const tree = buildQuadrantTree(spec, layout, theme);
-  const width = overrideWidth ?? layout.width;
-  return rasterize(tree, width, layout.height, format, scale);
+  return rasterize(tree, width, layout.height, format, scale, options);
 }
 
 async function renderTimeline(
@@ -93,7 +92,7 @@ async function renderTimeline(
   format: string,
   padding: number,
   scale: number,
-  overrideWidth?: number,
+  options: RenderOptions,
 ): Promise<string | Buffer> {
   // Resolve icons for events
   await Promise.all(spec.events.map(async event => {
@@ -107,14 +106,14 @@ async function renderTimeline(
   }));
 
   const layout = layoutTimeline(spec, theme, padding);
+  const tree = buildTimelineTree(spec, layout, theme, options);
+  const width = options.width ?? layout.width;
 
   if (format === 'pptx') {
-    return renderTimelineToPptx(spec, layout, theme);
+    return renderTimelineToPptx(spec, layout, theme, options);
   }
 
-  const tree = buildTimelineTree(spec, layout, theme);
-  const width = overrideWidth ?? layout.width;
-  return rasterize(tree, width, layout.height, format, scale);
+  return rasterize(tree, width, layout.height, format, scale, options);
 }
 
 async function renderGantt(
@@ -123,17 +122,73 @@ async function renderGantt(
   format: string,
   padding: number,
   scale: number,
-  overrideWidth?: number,
+  options: RenderOptions,
 ): Promise<string | Buffer> {
   const layout = layoutGantt(spec, theme, padding);
+  const tree = buildGanttTree(spec, layout, theme, options);
+  const width = options.width ?? layout.width;
 
   if (format === 'pptx') {
-    return renderGanttToPptx(spec, layout, theme);
+    return renderGanttToPptx(spec, layout, theme, options);
   }
 
-  const tree = buildGanttTree(spec, layout, theme);
-  const width = overrideWidth ?? layout.width;
-  return rasterize(tree, width, layout.height, format, scale);
+  return rasterize(tree, width, layout.height, format, scale, options);
+}
+
+export interface DiagramTreeResult {
+  tree: import('../types.js').SatoriElement;
+  width: number;
+  height: number;
+}
+
+/**
+ * Build the Satori element tree without rasterizing — for use in React components.
+ * Returns { tree, width, height } ready for satoriToReact() conversion.
+ */
+export async function buildDiagramTree(
+  spec: AnyDiagramSpec,
+  options: RenderOptions = {},
+): Promise<DiagramTreeResult> {
+  const padding = options.padding ?? 40;
+  const type = spec.type ?? 'flow';
+  const theme: ThemeConfig = getTheme(spec.theme);
+
+  // Default transparent background for component embedding
+  const opts = { ...options, background: options.background ?? 'transparent' };
+
+  switch (type) {
+    case 'quadrant': {
+      const layout = layoutQuadrant(spec as QuadrantSpec, theme, padding);
+      const tree = buildQuadrantTree(spec as QuadrantSpec, layout, theme, opts);
+      return { tree, width: opts.width ?? layout.width, height: layout.height };
+    }
+    case 'timeline': {
+      const tSpec = spec as TimelineSpec;
+      await Promise.all(tSpec.events.map(async event => {
+        if (event.icon) {
+          try { event.iconDataUri = await resolveIcon(event.icon); } catch {}
+        }
+      }));
+      const layout = layoutTimeline(tSpec, theme, padding);
+      const tree = buildTimelineTree(tSpec, layout, theme, opts);
+      return { tree, width: opts.width ?? layout.width, height: layout.height };
+    }
+    case 'gantt': {
+      const layout = layoutGantt(spec as GanttSpec, theme, padding);
+      const tree = buildGanttTree(spec as GanttSpec, layout, theme, opts);
+      return { tree, width: opts.width ?? layout.width, height: layout.height };
+    }
+    case 'flow':
+    default: {
+      const flowSpec = spec as DiagramSpec;
+      await Promise.all(flowSpec.nodes.map(async node => {
+        if (node.icon) node.iconDataUri = await resolveIcon(node.icon);
+      }));
+      const result = layoutWithGroups(flowSpec, theme, padding);
+      const tree = buildTree(flowSpec, result, theme, opts);
+      return { tree, width: opts.width ?? result.width, height: result.height };
+    }
+  }
 }
 
 async function rasterize(
@@ -142,10 +197,11 @@ async function rasterize(
   height: number,
   format: string,
   scale: number,
+  options: RenderOptions = {},
 ): Promise<string | Buffer> {
   switch (format) {
     case 'html':
-      return renderToHTML(tree);
+      return renderToHTML(tree, options);
     case 'svg':
       return renderToSvg(tree, width, height);
     case 'png':

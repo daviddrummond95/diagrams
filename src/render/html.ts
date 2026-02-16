@@ -1,9 +1,11 @@
-import type { SatoriElement } from '../types.js';
+import type { SatoriElement, RenderOptions } from '../types.js';
 
 /**
  * Serialize the Satori element tree to a standalone HTML file.
  */
-export function renderToHTML(tree: SatoriElement): string {
+export function renderToHTML(tree: SatoriElement, options: RenderOptions = {}): string {
+  const isTransparent = options.background === 'transparent';
+  const bodyBg = isTransparent ? 'transparent' : '#f1f5f9';
   return `<!DOCTYPE html>
 <html>
 <head>
@@ -17,7 +19,7 @@ export function renderToHTML(tree: SatoriElement): string {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: #f1f5f9;
+    background: ${bodyBg};
     font-family: 'Inter', system-ui, sans-serif;
   }
 </style>

@@ -51,10 +51,11 @@ export function layoutGantt(spec: GanttSpec, theme: ThemeConfig, padding: number
   let colorIndex = 0;
 
   const layoutTasks = orderedTasks.map(({ task, group }) => {
-    // Add group label if first in group
+    // Add group label if first in group — add vertical gap for label
     if (group && !seenGroups.has(group)) {
       seenGroups.add(group);
-      groupLabels.push({ label: group, y: currentY + barHeight / 2 });
+      currentY += 18; // extra space for group label above first task
+      groupLabels.push({ label: group, y: currentY });
     }
 
     const startDays = (new Date(task.start).getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24);

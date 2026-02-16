@@ -136,6 +136,7 @@ export interface RenderOptions {
   scale?: number;
   background?: string;
   padding?: number;
+  showTitle?: boolean;
 }
 
 // --- Theme ---

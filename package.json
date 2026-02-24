@@ -1,6 +1,6 @@
 {
   "name": "@agent-clis/diagrams",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "description": "Generate beautiful architecture diagrams from declarative YAML specs",
   "type": "module",
   "main": "./dist/index.js",
@@ -17,6 +17,7 @@
   "files": [
     "dist",
     "fonts",
+    "icons",
     "scripts"
   ],
   "scripts": {
@@ -54,6 +55,7 @@
   "dependencies": {
     "@resvg/resvg-js": "^2.6.0",
     "commander": "^14.0.0",
+    "fast-xml-parser": "^5.3.7",
     "pptxgenjs": "^4.0.1",
     "satori": "^0.12.0",
     "simple-icons": "^16.8.0",

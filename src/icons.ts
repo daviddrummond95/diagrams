@@ -3,8 +3,9 @@ import { readFile } from 'fs/promises';
 import { fileURLToPath } from 'url';
 import * as simpleIcons from 'simple-icons';
 import { cloudIconIndex } from './cloud-icons-index.js';
+import { geistIconIndex } from './geist-icons-index.js';
 
-type IconType = 'emoji' | 'favicon' | 'cloud' | 'named' | 'none';
+type IconType = 'emoji' | 'favicon' | 'cloud' | 'geist' | 'named' | 'none';
 
 type SimpleIcon = { title: string; slug: string; svg: string; hex: string };
 
@@ -16,15 +17,17 @@ for (const [key, value] of Object.entries(simpleIcons)) {
   }
 }
 
-// Resolve downloaded_icons directory relative to this file
+// Resolve icon directories relative to this file
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const iconsRoot = resolve(__dirname, '..', 'downloaded_icons');
+const geistIconsRoot = resolve(__dirname, '..', 'icons');
 
 const emojiRegex = /\p{Emoji_Presentation}|\p{Emoji}\uFE0F/u;
 
 export function detectIconType(icon: string | undefined): IconType {
   if (!icon) return 'none';
   if (icon.startsWith('aws:') || icon.startsWith('gcp:')) return 'cloud';
+  if (icon.startsWith('geist:')) return 'geist';
   if (icon.startsWith('favicon:')) return 'favicon';
   if (emojiRegex.test(icon)) return 'emoji';
   return 'named';
@@ -72,6 +75,35 @@ async function resolveCloudIcon(key: string): Promise<string> {
   return `data:image/svg+xml;base64,${btoa(svg)}`;
 }
 
+async function resolveGeistIcon(key: string): Promise<string> {
+  const relPath = geistIconIndex[key];
+  if (!relPath) throw new Error(`Geist icon not found: ${key}. Use "geist:<name>" — run "diagrams icons geist" to list.`);
+  const fullPath = resolve(geistIconsRoot, relPath);
+  let svg = await readFile(fullPath, 'utf-8');
+
+  // Replace currentColor with a medium-dark fill
+  svg = svg.replace(/currentColor/g, '#555555');
+
+  // Normalize to match AWS icon format for OOXML/PPTX compatibility:
+  // 1. Remove stroke-linejoin from root <svg> (unusual attr that confuses OOXML)
+  svg = svg.replace(/ stroke-linejoin="[^"]*"/, '');
+  // 2. Scale up from 16x16 to 48x48 (matching AWS icon dimensions)
+  //    Keep viewBox at 0 0 16 16 — no negative coords (OOXML can choke on them)
+  svg = svg.replace(/width="16"/, 'width="48"');
+  svg = svg.replace(/height="16"/, 'height="48"');
+  // 3. Add version and xlink namespace to <svg> tag
+  svg = svg.replace(
+    '<svg ',
+    '<svg version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" '
+  );
+  // 4. Add XML declaration
+  if (!svg.startsWith('<?xml')) {
+    svg = '<?xml version="1.0" encoding="UTF-8"?>\n' + svg;
+  }
+
+  return `data:image/svg+xml;base64,${btoa(svg)}`;
+}
+
 export async function resolveIcon(icon: string): Promise<string> {
   const type = detectIconType(icon);
   try {
@@ -82,6 +114,8 @@ export async function resolveIcon(icon: string): Promise<string> {
         return await resolveFavicon(icon.slice('favicon:'.length));
       case 'cloud':
         return await resolveCloudIcon(icon);
+      case 'geist':
+        return await resolveGeistIcon(icon);
       case 'named':
         return resolveSimpleIcon(icon);
       default:

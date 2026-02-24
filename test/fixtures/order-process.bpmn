@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             id="Definitions_1"
+             name="Order Processing">
+
+  <process id="OrderProcess" name="Order Processing Workflow" isExecutable="true">
+
+    <laneSet id="LaneSet_1">
+      <lane id="Lane_Sales" name="Sales">
+        <flowNodeRef>StartEvent_1</flowNodeRef>
+        <flowNodeRef>Task_ReceiveOrder</flowNodeRef>
+        <flowNodeRef>Task_ValidateOrder</flowNodeRef>
+        <flowNodeRef>Gateway_Valid</flowNodeRef>
+        <flowNodeRef>Task_RejectOrder</flowNodeRef>
+      </lane>
+      <lane id="Lane_Fulfillment" name="Fulfillment">
+        <flowNodeRef>Task_CheckInventory</flowNodeRef>
+        <flowNodeRef>Gateway_InStock</flowNodeRef>
+        <flowNodeRef>Task_PackOrder</flowNodeRef>
+        <flowNodeRef>Task_BackOrder</flowNodeRef>
+        <flowNodeRef>Task_ShipOrder</flowNodeRef>
+      </lane>
+      <lane id="Lane_Finance" name="Finance">
+        <flowNodeRef>Task_ProcessPayment</flowNodeRef>
+        <flowNodeRef>Task_SendInvoice</flowNodeRef>
+        <flowNodeRef>EndEvent_1</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <startEvent id="StartEvent_1" name="Order Received"/>
+
+    <userTask id="Task_ReceiveOrder" name="Review Order"/>
+    <serviceTask id="Task_ValidateOrder" name="Validate Order Data"/>
+    <exclusiveGateway id="Gateway_Valid" name="Order Valid?"/>
+    <sendTask id="Task_RejectOrder" name="Send Rejection"/>
+
+    <serviceTask id="Task_CheckInventory" name="Check Inventory"/>
+    <exclusiveGateway id="Gateway_InStock" name="In Stock?"/>
+    <manualTask id="Task_PackOrder" name="Pack Order"/>
+    <userTask id="Task_BackOrder" name="Create Back Order"/>
+    <serviceTask id="Task_ShipOrder" name="Ship Order"/>
+
+    <serviceTask id="Task_ProcessPayment" name="Process Payment"/>
+    <scriptTask id="Task_SendInvoice" name="Generate Invoice"/>
+
+    <endEvent id="EndEvent_1" name="Order Complete"/>
+
+    <sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="Task_ReceiveOrder"/>
+    <sequenceFlow id="Flow_2" sourceRef="Task_ReceiveOrder" targetRef="Task_ValidateOrder"/>
+    <sequenceFlow id="Flow_3" sourceRef="Task_ValidateOrder" targetRef="Gateway_Valid"/>
+    <sequenceFlow id="Flow_4" sourceRef="Gateway_Valid" targetRef="Task_CheckInventory" name="Yes"/>
+    <sequenceFlow id="Flow_5" sourceRef="Gateway_Valid" targetRef="Task_RejectOrder" name="No"/>
+    <sequenceFlow id="Flow_6" sourceRef="Task_CheckInventory" targetRef="Gateway_InStock"/>
+    <sequenceFlow id="Flow_7" sourceRef="Gateway_InStock" targetRef="Task_PackOrder" name="Yes"/>
+    <sequenceFlow id="Flow_8" sourceRef="Gateway_InStock" targetRef="Task_BackOrder" name="No"/>
+    <sequenceFlow id="Flow_9" sourceRef="Task_PackOrder" targetRef="Task_ShipOrder"/>
+    <sequenceFlow id="Flow_10" sourceRef="Task_BackOrder" targetRef="Task_PackOrder"/>
+    <sequenceFlow id="Flow_11" sourceRef="Task_ShipOrder" targetRef="Task_ProcessPayment"/>
+    <sequenceFlow id="Flow_12" sourceRef="Task_ProcessPayment" targetRef="Task_SendInvoice"/>
+    <sequenceFlow id="Flow_13" sourceRef="Task_SendInvoice" targetRef="EndEvent_1"/>
+  </process>
+
+</definitions>

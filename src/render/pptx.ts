@@ -253,7 +253,7 @@ export async function renderToPptx(
         h: px(pos.height),
         fill: { color: bgColor },
         line: { color: borderColor, width: theme.node.borderWidth },
-        rectRadius: shape === 'diamond' ? undefined : rectRadius,
+        rectRadius: (shape === 'diamond' || shape === 'circle') ? undefined : rectRadius,
       });
 
       // Icon on top of shape
@@ -286,7 +286,7 @@ export async function renderToPptx(
         shape: shapeType(pptx, shape),
         fill: { color: bgColor },
         line: { color: borderColor, width: theme.node.borderWidth },
-        rectRadius: shape === 'diamond' ? undefined : rectRadius,
+        rectRadius: (shape === 'diamond' || shape === 'circle') ? undefined : rectRadius,
         valign: 'middle',
         align: 'center',
         margin: [4, 8, 4, 8],

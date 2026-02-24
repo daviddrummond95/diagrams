@@ -7,6 +7,8 @@ import { validate } from './validate.js';
 import { renderDiagram } from './render/index.js';
 import type { OutputFormat, Direction, DiagramSpec } from './types.js';
 import { themes } from './themes/index.js';
+import { convertBpmn } from './convert/bpmn.js';
+import YAML from 'yaml';
 
 function readStdin(): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -175,6 +177,68 @@ program
       console.log(`  ${name.padEnd(maxLen + 2)}${desc}`);
     }
     console.log(`\nUsage: diagrams render spec.yaml --theme <name>`);
+  });
+
+program
+  .command('convert')
+  .description('Convert a BPMN file to a diagrams YAML spec')
+  .argument('<input>', 'Input BPMN file path (.bpmn, .xml) or "-" for stdin')
+  .option('-o, --output <path>', 'Output file path (default: stdout)')
+  .option('-d, --direction <dir>', 'Flow direction: TB, LR', 'LR')
+  .option('-r, --render', 'Render immediately after converting (outputs PNG)')
+  .option('-f, --format <format>', 'Output format when using --render: png, svg, html, pptx', 'png')
+  .option('-t, --theme <theme>', 'Theme name for rendering', 'default')
+  .action(async (input: string, opts: Record<string, any>) => {
+    try {
+      // Read input
+      let content: string;
+      if (input === '-') {
+        content = await readStdin();
+      } else {
+        content = await readFile(resolve(input), 'utf-8');
+      }
+
+      // Convert BPMN → DiagramSpec
+      const spec = convertBpmn(content, {
+        direction: opts.direction as 'TB' | 'LR',
+      });
+
+      // Validate
+      const errors = validate(spec);
+      if (errors.length > 0) {
+        console.error('Conversion produced validation warnings:');
+        errors.forEach(e => console.error(`  - ${e}`));
+      }
+
+      const yamlStr = YAML.stringify(spec, { lineWidth: 0 });
+
+      if (opts.render) {
+        // Render directly
+        spec.theme = opts.theme;
+        const format = opts.format as OutputFormat;
+        const result = await renderDiagram(spec, { format, scale: 2, padding: 40 });
+        const base = input === '-' ? 'diagram' : basename(input, extname(input));
+        const extMap: Record<string, string> = { png: '.png', svg: '.svg', html: '.html', pptx: '.pptx' };
+        const outputPath = opts.output ?? (base + extMap[format]);
+        if (typeof result === 'string') {
+          await writeFile(outputPath, result, 'utf-8');
+        } else {
+          await writeFile(outputPath, result);
+        }
+        console.log(`Converted & rendered ${format.toUpperCase()} → ${outputPath}`);
+      } else if (opts.output) {
+        await writeFile(opts.output, yamlStr, 'utf-8');
+        console.log(`Converted BPMN → ${opts.output}`);
+        console.log(`  ${spec.nodes.length} nodes, ${spec.edges.length} edges` +
+          (spec.groups?.length ? `, ${spec.groups.length} groups` : ''));
+      } else {
+        // stdout
+        process.stdout.write(yamlStr);
+      }
+    } catch (err: unknown) {
+      console.error(`Error: ${err instanceof Error ? err.message : err}`);
+      process.exit(1);
+    }
   });
 
 program.parse();

@@ -5,6 +5,7 @@ dist/
 *.pptx
 !fonts/*.svg
 !downloaded_icons/**/*.svg
+!icons/**/*.svg
 bun.lock
 .DS_Store
 *.node

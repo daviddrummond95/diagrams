@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             id="Definitions_1"
+             name="Customer Support Process">
+
+  <process id="SupportProcess" name="Support Ticket Flow" isExecutable="true">
+
+    <startEvent id="start" name="Ticket Created">
+      <messageEventDefinition/>
+    </startEvent>
+
+    <userTask id="triage" name="Triage Ticket"/>
+
+    <exclusiveGateway id="gw_priority" name="Priority?"/>
+
+    <serviceTask id="auto_respond" name="Send Auto Response"/>
+    <userTask id="assign_agent" name="Assign to Agent"/>
+
+    <userTask id="investigate" name="Investigate Issue"/>
+
+    <intermediateCatchEvent id="timer_sla" name="SLA Timer">
+      <timerEventDefinition/>
+    </intermediateCatchEvent>
+
+    <userTask id="escalate" name="Escalate to Manager"/>
+
+    <serviceTask id="resolve" name="Apply Resolution"/>
+    <sendTask id="notify" name="Notify Customer"/>
+    <scriptTask id="close" name="Close Ticket"/>
+
+    <endEvent id="end" name="Ticket Closed"/>
+
+    <subProcess id="sub_review" name="Review Subprocess">
+      <startEvent id="sub_start" name="Start Review"/>
+      <userTask id="sub_check" name="Quality Check"/>
+      <endEvent id="sub_end" name="Review Done"/>
+      <sequenceFlow id="sf_sub1" sourceRef="sub_start" targetRef="sub_check"/>
+      <sequenceFlow id="sf_sub2" sourceRef="sub_check" targetRef="sub_end"/>
+    </subProcess>
+
+    <sequenceFlow id="sf1" sourceRef="start" targetRef="triage"/>
+    <sequenceFlow id="sf2" sourceRef="triage" targetRef="gw_priority"/>
+    <sequenceFlow id="sf3" sourceRef="gw_priority" targetRef="auto_respond" name="Low"/>
+    <sequenceFlow id="sf4" sourceRef="gw_priority" targetRef="assign_agent" name="High"/>
+    <sequenceFlow id="sf5" sourceRef="auto_respond" targetRef="resolve"/>
+    <sequenceFlow id="sf6" sourceRef="assign_agent" targetRef="investigate"/>
+    <sequenceFlow id="sf7" sourceRef="investigate" targetRef="resolve"/>
+    <sequenceFlow id="sf8" sourceRef="timer_sla" targetRef="escalate"/>
+    <sequenceFlow id="sf9" sourceRef="escalate" targetRef="investigate"/>
+    <sequenceFlow id="sf10" sourceRef="resolve" targetRef="sub_review"/>
+    <sequenceFlow id="sf11" sourceRef="sub_review" targetRef="notify"/>
+    <sequenceFlow id="sf12" sourceRef="notify" targetRef="close"/>
+    <sequenceFlow id="sf13" sourceRef="close" targetRef="end"/>
+  </process>
+</definitions>

@@ -1,5 +1,7 @@
 # Roadmap: August 2026 – January 2027
 
+> Progress is tracked in [#26](https://github.com/agent-clis/diagrams/issues/26), which links a detailed issue for every work item below.
+
 A proposed 6-month plan for `@agent-clis/diagrams`. The project is at v0.2.0 with a solid core: YAML → PNG/SVG/HTML/PPTX rendering via Satori, a custom layered layout engine, 20 themes, AWS/GCP/Geist/simple-icons icon packs, gantt/timeline/quadrant diagram types, BPMN import, and a bundled agent skill. The plan below hardens that core first, then expands diagram types and interop, and lands a stable v1.0 in month six.
 
 ## Month 1 (August) — Foundations & trust

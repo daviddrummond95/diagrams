@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Money types · diagrams.sh · Vigo Ledger proofs</title>
+<style>
+
+@import url("https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&family=Public+Sans:wght@400;500;600;700&display=swap");
+:root {
+  --paper: #efe6d0;
+  --paper-2: #e7dcc3;
+  --ink: #161410;
+  --ink-2: #5c5346;
+  --rule: #c4b496;
+  --crimson: #9b2335;
+  --link: #6b1f2a;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: #d9cbb0; color: var(--ink); }
+body {
+  font-family: "Newsreader", "Iowan Old Style", Palatino, Georgia, serif;
+  font-size: 18px;
+  line-height: 1.45;
+}
+.sheet {
+  max-width: 880px;
+  margin: 32px auto 64px;
+  background: var(--paper);
+  padding: 40px 52px 80px;
+  box-shadow: 0 1px 0 rgba(22,20,16,.12), 0 24px 48px rgba(22,20,16,.12);
+  border: 1px solid #cbbfa6;
+}
+.kicker {
+  font-family: "Public Sans", system-ui, sans-serif;
+  font-size: 11px; font-weight: 600; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--ink-2); margin: 0;
+}
+masthead {
+  display: block;
+  border-top: 3px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  padding: 10px 0 14px; margin: 8px 0 18px; text-align: center;
+}
+masthead h1 {
+  font-size: 34px; font-weight: 700; letter-spacing: .02em;
+  margin: 4px 0 6px; line-height: 1.1;
+}
+.dateline {
+  font-family: "Public Sans", system-ui, sans-serif;
+  font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2);
+}
+.lede { font-size: 16px; font-style: italic; margin: 0 0 22px; max-width: 46em; }
+figure.chart {
+  min-height: 100vh; margin: 0; padding: 56px 0 72px;
+  display: flex; flex-direction: column; justify-content: center;
+  border-bottom: 1px solid var(--rule); break-inside: avoid;
+}
+figure.chart > svg {
+  display: block; width: 100%; height: auto; margin: 16px 0 20px;
+  background: #f4ead4; border: 1px solid var(--rule); overflow: visible;
+}
+.title { font-size: 22px; font-weight: 700; margin: 0 0 8px; letter-spacing: -.01em; }
+.caption { font-size: 16px; font-style: italic; margin: 0 0 16px; max-width: 42em; }
+.stat { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: baseline;
+  margin: 0 0 12px; padding: 8px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--ink); }
+.stat-num { font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+.stat-label { font-family: "Public Sans", system-ui, sans-serif; font-size: 11px; color: var(--ink-2); text-transform: uppercase; letter-spacing: .08em; }
+.stat-cmp { font-family: "Public Sans", system-ui, sans-serif; font-size: 13px; color: var(--ink-2); }
+.stat-cmp.down { color: var(--crimson); }
+.stat-cmp.up { color: #2f4a3c; }
+.source { font-family: "Public Sans", system-ui, sans-serif; font-size: 12px; color: var(--ink-2); margin: 8px 0 0; }
+.source a { color: var(--link); text-decoration: underline; text-underline-offset: 2px; }
+.footnote { font-family: "Public Sans", system-ui, sans-serif; font-size: 11px; color: var(--ink-2); margin: 4px 0 0; }
+.legend { display: flex; gap: 18px; flex-wrap: wrap; font-family: "Public Sans", system-ui, sans-serif;
+  font-size: 12px; margin: 16px 0 8px; align-items: center; }
+.legend .swatch { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 14px; height: 14px; display: inline-block; border: 1px solid var(--ink); }
+.data-table { width: 100%; max-width: 520px; border-collapse: collapse;
+  font-family: "Public Sans", system-ui, sans-serif; font-size: 13px; margin: 12px 0 0; }
+.data-table th, .data-table td { text-align: left; padding: 4px 8px 4px 0; border-bottom: 1px solid var(--rule); }
+.data-table th { font-weight: 600; color: var(--ink-2); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+.fallback { margin-top: 20px; padding: 8px 12px; background: var(--paper-2); border: 1px solid var(--rule); }
+.fallback summary {
+  font-family: "Public Sans", system-ui, sans-serif; font-size: 11px; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); cursor: pointer;
+}
+.fallback h3 { font-family: "Public Sans", system-ui, sans-serif; font-size: 11px; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase; margin: 0 0 6px; color: var(--ink-2); }
+.fmt-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 0 0 36px;
+  border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
+.fmt-cell { padding: 10px 10px 12px; border-left: 1px solid var(--rule); }
+.fmt-cell:nth-child(4n+1) { border-left: 0; }
+.fmt-cell .in { font-family: "Public Sans", ui-monospace, monospace; font-size: 11px; color: var(--ink-2); display: block; }
+.fmt-cell .out { font-weight: 700; font-size: 22px; letter-spacing: -.02em; display: block; }
+.note { font-family: "Public Sans", system-ui, sans-serif; font-size: 11px; color: var(--ink-2);
+  margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--rule); }
+.unit-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.unit-table th, .unit-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule); }
+.unit-table .out { font-variant-numeric: tabular-nums; font-weight: 600; }
+
+</style>
+</head>
+<body>
+<!-- GEOMETRY\n{
+  "delta": {
+    "plot_h_px": 240,
+    "max_value": 3000000,
+    "px_per_dollar": 8e-05,
+    "from_value": 3000000,
+    "to_value": 500000,
+    "from_px": 240.00000000000003,
+    "to_px": 40.0,
+    "ratio": 6.000000000000001,
+    "note": "1px = $12,500; $3M=240px, $500k=40px"
+  },
+  "waterfall_jail": {
+    "plot_h_px": 240,
+    "max_value": 65000.0,
+    "px_per_dollar": 0.0036923076923076922,
+    "vehicles_value": 65000.0,
+    "vehicles_px": 240.0,
+    "zero_steps": "repairs, cameras -> 2px hairline + n/a",
+    "note": "1px = $270.83; vehicles $65k = 240px"
+  },
+  "sankey_drug": {
+    "plot_h_px": 200,
+    "max_value": 250000.0,
+    "px_per_dollar": 0.0008,
+    "general_program_value": 250000,
+    "general_program_px": 200.0,
+    "opioid_program_px": 2.0,
+    "note": "1px = $1,250; $250k link = 200px; zero link = 2px hairline"
+  },
+  "bar": {
+    "plot_w_px": 460,
+    "max_value": 520000,
+    "px_per_dollar": 0.0008846153846153846,
+    "items": {
+      "buildings": {
+        "value": 520000,
+        "px": 460.0
+      },
+      "traffic": {
+        "value": 469000,
+        "px": 414.8846153846154
+      },
+      "rescue": {
+        "value": 225000,
+        "px": 199.03846153846155
+      },
+      "plow": {
+        "value": 100000,
+        "px": 88.46153846153847
+      },
+      "warming": {
+        "value": 47500,
+        "px": 42.01923076923077
+      },
+      "susie": {
+        "value": 45000,
+        "px": 39.80769230769231
+      }
+    },
+    "buildings_px": 460.0,
+    "susie_px": 39.80769230769231,
+    "ratio": 11.555555555555555,
+    "note": "1px = $1,000; $520k=520px, $45k=45px"
+  },
+  "stacked_bar": {
+    "plot_w_px": 480,
+    "max_value": 2000000,
+    "px_per_dollar": 0.00024,
+    "segments": [
+      {
+        "id": "city",
+        "px": 240.0,
+        "value": 1000000
+      },
+      {
+        "id": "county",
+        "px": 240.0,
+        "value": 1000000
+      }
+    ],
+    "note": "1px = $4,166.67; each $1M = 240px"
+  },
+  "grouped_bar": {
+    "max_value": 0,
+    "note": "all zeros \u2014 no bar heights invented"
+  },
+  "slope": {
+    "plot_h_px": 380,
+    "max_value": 3000000,
+    "px_per_dollar": 0.00012666666666666666,
+    "items": {
+      "clinton": {
+        "from_y": 64.0,
+        "to_y": 380.6666666666667,
+        "from": 3000000,
+        "to": 500000
+      },
+      "clerk": {
+        "from_y": 442.86,
+        "to_y": 430.1933333333333,
+        "from": 9000,
+        "to": 109000
+      }
+    },
+    "note": "1px = $8,333.33; Clinton $3M at top, $500k 60px above $0; clerk hugs baseline"
+  },
+  "treemap": {
+    "frame": {
+      "w": 800,
+      "h": 360,
+      "area": 288000
+    },
+    "total_value": 1406500.0,
+    "px2_per_dollar": 0.20476359758265197,
+    "buildings": {
+      "value": 520000.0,
+      "w": 295.7696409527195,
+      "h": 360.0,
+      "area": 106477.07074297902,
+      "x": 20,
+      "y": 16
+    },
+    "susie": {
+      "value": 45000.0,
+      "w": 114.10842978564273,
+      "h": 80.75093057128986,
+      "area": 9214.36189121934,
+      "x": 705.8915702143572,
+      "y": 295.24906942871013
+    },
+    "area_ratio": 11.555555555555554,
+    "value_ratio": 11.555555555555555,
+    "note": "800x360=288,000 px2 over $1,406,500; area proportional to value (520k:45k ~ 11.556:1)",
+    "leaves": {
+      "buildings": {
+        "value": 520000.0,
+        "w": 295.7696409527195,
+        "h": 360.0,
+        "area": 106477.07074297902,
+        "x": 20,
+        "y": 16
+      },
+      "traffic": {
+        "value": 469000.0,
+        "w": 266.7614646285105,
+        "h": 360.0,
+        "area": 96034.12726626378,
+        "x": 315.7696409527195,
+        "y": 16
+      },
+      "rescue": {
+        "value": 225000.0,
+        "w": 237.46889441877,
+        "h": 194.0119760479042,
+        "area": 46071.80945609669,
+        "x": 582.53110558123,
+        "y": 16
+      },
+      "plow": {
+        "value": 100000.0,
+        "w": 123.36046463312726,
+        "h": 165.9880239520958,
+        "area": 20476.359758265196,
+        "x": 582.53110558123,
+        "y": 210.0119760479042
+      },
+      "warming": {
+        "value": 47500.0,
+        "w": 114.10842978564273,
+        "h": 85.23709338080594,
+        "area": 9726.270885175967,
+        "x": 705.8915702143572,
+        "y": 210.0119760479042
+      },
+      "susie": {
+        "value": 45000.0,
+        "w": 114.10842978564273,
+        "h": 80.75093057128986,
+        "area": 9214.36189121934,
+        "x": 705.8915702143572,
+        "y": 295.24906942871013
+      }
+    }
+  },
+  "bullet": {
+    "plot_w_px": 480,
+    "max_value": 200000,
+    "px_per_dollar": 0.0024,
+    "actual_px": 479.99999999999994,
+    "note": "1px = $416.67; actual $200k = 480px"
+  },
+  "alluvial": {
+    "px_per_dollar": 0.00027347611202635915,
+    "bands": [
+      {
+        "from": "bldg-i",
+        "value": 520000,
+        "px": 142.20757825370674
+      },
+      {
+        "from": "traffic-i",
+        "value": 469000,
+        "px": 128.26029654036245
+      },
+      {
+        "from": "rescue-i",
+        "value": 225000,
+        "px": 61.53212520593081
+      }
+    ],
+    "note": "usable 332px over $1,214,000; 520k/469k/225k -> ~142/128/62 px"
+  },
+  "dot_plot": {
+    "plot_w_px": 400,
+    "px_per_dollar": 0.004,
+    "dots": {
+      "plow": {
+        "value": 100000,
+        "cx_offset": 400.0
+      },
+      "mmm": {
+        "value": 87500,
+        "cx_offset": 350.0
+      },
+      "warming": {
+        "value": 47500,
+        "cx_offset": 190.0
+      },
+      "susie": {
+        "value": 45000,
+        "cx_offset": 180.0
+      }
+    },
+    "note": "1px = $250; plow $100k = 400px"
+  },
+  "range_plot": {
+    "plot_w_px": 480,
+    "px_per_dollar": 0.0006857142857142857,
+    "span_px": 480,
+    "note": "1px = $1,458.33; $0-$700k = 480px, mid at $700k"
+  },
+  "line": {
+    "all_zero": true,
+    "note": "all values 0 \u2014 axes + n/a, no polyline"
+  },
+  "stacked_area": {
+    "plot_h_px": 240,
+    "px_per_dollar": 0.00012,
+    "segments": [
+      {
+        "id": "city",
+        "value": 1000000,
+        "px": 120.0
+      },
+      {
+        "id": "county",
+        "value": 1000000,
+        "px": 120.0
+      }
+    ],
+    "note": "1px = $8,333.33; each $1M = 120px (equal halves of a $2M column)"
+  },
+  "histogram": {
+    "values": [
+      520000,
+      469000,
+      225000,
+      100000,
+      47500,
+      45000
+    ],
+    "bin_width": 100000.0,
+    "bins": [
+      {
+        "start": 0.0,
+        "end": 100000.0,
+        "count": 2,
+        "h_px": 220.0,
+        "w_px": 103.33333333333334
+      },
+      {
+        "start": 100000.0,
+        "end": 200000.0,
+        "count": 1,
+        "h_px": 110.0,
+        "w_px": 103.33333333333334
+      },
+      {
+        "start": 200000.0,
+        "end": 300000.0,
+        "count": 1,
+        "h_px": 110.0,
+        "w_px": 103.33333333333334
+      },
+      {
+        "start": 300000.0,
+        "end": 400000.0,
+        "count": 0,
+        "h_px": 0.0,
+        "w_px": 103.33333333333334
+      },
+      {
+        "start": 400000.0,
+        "end": 500000.0,
+        "count": 1,
+        "h_px": 110.0,
+        "w_px": 103.33333333333334
+      },
+      {
+        "start": 500000.0,
+        "end": 600000.0,
+        "count": 1,
+        "h_px": 110.0,
+        "w_px": 103.33333333333334
+      }
+    ],
+    "px_per_dollar_x": 0.0010333333333333334,
+    "px_per_count_y": 110.0,
+    "note": "six values, binWidth 100000; height=count, width=binWidth on linear x"
+  },
+  "section_ids": [
+    "delta-clinton",
+    "waterfall-jail",
+    "waterfall-buildings",
+    "sankey-drug-court",
+    "sankey-911",
+    "bar",
+    "stacked-bar",
+    "grouped-bar",
+    "slope",
+    "treemap",
+    "bullet",
+    "alluvial",
+    "dot-plot",
+    "range-plot",
+    "line",
+    "stacked-area",
+    "histogram"
+  ]
+}\n-->
+<article class="sheet">
+  <p class="kicker">Vol. I · No. 1 · diagrams.sh money family · CivicBase chrome</p>
+  <masthead>
+    <div class="dateline">Terre Haute, Indiana · Saturday, August 29, 2026</div>
+    <h1>Money types · diagrams.sh · Vigo Ledger proofs</h1>
+    <div class="dateline">Geometry is computed from YAML. Zeros render as n/a.</div>
+  </masthead>
+  <p class="lede">Every mark is sized from the Ledger numbers in
+  <code>examples/*.yaml</code>. Compact currency is <code>formatValue</code>
+  (Editorial §7): k &lt; 1e6 ≤ M &lt; 1e9 ≤ B. Hairline + n/a where a note
+  still has a zero. No pie. No invented heights.</p>
+  
+<figure class="chart" id="delta-clinton">
+  <h2 class="title">Clinton Road widening</h2>
+  <p class="caption">EDIT-fund funding dropped from $3 million to $500,000.</p>
+  <div class="stat"><span class="stat-num">$500k</span> <span class="stat-label">Adopted</span> <span class="stat-cmp down">from the proposed $3M</span></div>
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 840 392" width="100%" preserveAspectRatio="xMidYMid meet" style="max-width:840px;height:auto;display:block"><title>Clinton Road widening</title><desc>Clinton Road widening in the EDIT budget dropped from $3 million to $500,000.</desc><text x="40" y="40" font-size="36" font-family="Public Sans, system-ui, sans-serif" font-weight="600" fill="#161410">$3M</text>
+<text x="800" y="40" font-size="36" font-family="Public Sans, system-ui, sans-serif" font-weight="600" fill="#9b2335" text-anchor="end">$500k</text>
+<text x="420" y="40" font-size="18" font-family="Public Sans, system-ui, sans-serif" font-weight="600" fill="#9b2335" text-anchor="middle">-$2.5M  -83%</text>
+<rect x="80" y="88" width="48" height="240" fill="#161410" data-id="from" data-value="3000000" data-px="240.0"/>
+<rect x="712" y="288" width="48" height="40" fill="#9b2335" data-id="to" data-value="500000" data-px="40.0"/>
+<line x1="128" y1="88" x2="712" y2="288" stroke="#9b2335" stroke-width="1.5"/>
+<line x1="40" y1="328" x2="800" y2="328" stroke="#c4b496" stroke-width="1"/>
+<text x="104" y="344" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle"><tspan x="104" dy="0">As previously</tspan><tspan x="104" dy="13">budgeted</tspan></text>
+<text x="736" y="344" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">Adopted</text>
+<text x="420" y="148" font-size="15" font-family="Newsreader, serif" font-weight="700" fill="#9b2335" text-anchor="middle">$3M → $500k</text></svg>
+  
+  <p class="source">Source: <a href="https://vigoledger.org/">County council, Aug 13</a></p>
+  <p class="footnote">Figures from the adopted EDIT line, not the original agenda packet.</p>
+  <div class="fallback"><details><summary>dataTable</summary><table class="data-table"><thead><tr><th>Stage</th><th>Amount</th></tr></thead><tbody><tr><td>As previously budgeted</td><td>$3M</td></tr><tr><td>Adopted</td><td>$500k</td></tr></tbody></table></details></div>
+</figure>
+
+<figure class="chart" id="waterfall-jail">
+  <h2 class="title">Jail budget: what went up</h2>
+  <p class="caption">Vehicles, repairs, and new body cameras are why the jail budget rose.</p>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 840 340" width="100%" preserveAspectRatio="xMidYMid meet" style="max-width:840px;height:auto;display:block"><title>Jail budget: what went up</title><desc>Signed steps to a running total.</desc><line x1="36" y1="264" x2="804" y2="264" stroke="#c4b496" stroke-width="1"/>
+<line x1="36" y1="263" x2="167.2" y2="263" stroke="#161410" stroke-width="2.0"/>
+<text x="101.6" y="254" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$0</text>
+<text x="101.6" y="294" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle"><tspan x="101.6" dy="0">Prior jail</tspan><tspan x="101.6" dy="12">budget</tspan></text>
+<line x1="167.2" y1="264" x2="195.2" y2="264" stroke="#8a8378" stroke-width="1"/>
+<rect x="195.2" y="24" width="131.2" height="240" fill="#2f4a3c" data-id="vehicles" data-value="65000.0" data-px="240.0"/>
+<text x="260.8" y="16" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#2f4a3c" text-anchor="middle">+$65k</text>
+<text x="260.8" y="294" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">Vehicles</text>
+<line x1="326.4" y1="24" x2="354.4" y2="24" stroke="#8a8378" stroke-width="1"/>
+<line x1="354.4" y1="24" x2="485.6" y2="24" stroke="#8a8378" stroke-width="2.0" data-id="repairs" data-value="0" data-px="2.0"/>
+<text x="420" y="16" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">n/a</text>
+<text x="420" y="294" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">Repairs</text>
+<line x1="485.6" y1="24" x2="513.6" y2="24" stroke="#8a8378" stroke-width="1"/>
+<line x1="513.6" y1="24" x2="644.8" y2="24" stroke="#8a8378" stroke-width="2.0" data-id="cameras" data-value="0" data-px="2.0"/>
+<text x="579.2" y="16" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">n/a</text>
+<text x="579.2" y="294" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">Body cameras</text>
+<line x1="644.8" y1="24" x2="672.8" y2="24" stroke="#8a8378" stroke-width="1"/>
+<rect x="672.8" y="24" width="131.2" height="240" fill="#3e4f6d" data-id="end" data-value="65000.0" data-px="240.0"/>
+<text x="738.4" y="16" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="middle">$65k</text>
+<text x="738.4" y="294" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle"><tspan x="738.4" dy="0">Proposed</tspan><tspan x="738.4" dy="12">jail budget</tspan></text></svg>
+  
+  <p class="source">Source: <a href="https://vigoledger.org/">County council, Aug 12</a></p>
+  
+  <div class="fallback"><details><summary>dataTable</summary><table class="data-table"><thead><tr><th>Step</th><th>Amount</th></tr></thead><tbody><tr><td>Prior jail budget</td><td>$0</td></tr><tr><td>Vehicles</td><td>$65k</td></tr><tr><td>Repairs</td><td>$0</td></tr><tr><td>Body cameras</td><td>$0</td></tr></tbody></table></details></div>
+</figure>
+
+<figure class="chart" id="waterfall-buildings">
+  <h2 class="title">Building maintenance emergencies</h2>
+  <p class="caption">The county added $520,000 to cover a run of building-maintenance emergencies.</p>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 840 340" width="100%" preserveAspectRatio="xMidYMid meet" style="max-width:840px;height:auto;display:block"><title>Building maintenance emergencies</title><desc>Signed steps to a running total.</desc><line x1="36" y1="264" x2="804" y2="264" stroke="#c4b496" stroke-width="1"/>
+<line x1="36" y1="263" x2="273.333" y2="263" stroke="#161410" stroke-width="2.0"/>
+<text x="154.667" y="254" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$0</text>
+<text x="154.667" y="294" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle"><tspan x="154.667" dy="0">Building</tspan><tspan x="154.667" dy="12">maintenance</tspan></text>
+<line x1="273.333" y1="264" x2="301.333" y2="264" stroke="#8a8378" stroke-width="1"/>
+<rect x="301.333" y="24" width="237.333" height="240" fill="#2f4a3c" data-id="extra" data-value="520000.0" data-px="240.0"/>
+<text x="420" y="16" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#2f4a3c" text-anchor="middle">+$520k</text>
+<text x="420" y="294" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle"><tspan x="420" dy="0">Emergency</tspan><tspan x="420" dy="12">repairs</tspan></text>
+<line x1="538.667" y1="24" x2="566.667" y2="24" stroke="#8a8378" stroke-width="1"/>
+<rect x="566.667" y="24" width="237.333" height="240" fill="#3e4f6d" data-id="end" data-value="520000.0" data-px="240.0"/>
+<text x="685.333" y="16" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="middle">$520k</text>
+<text x="685.333" y="294" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle"><tspan x="685.333" dy="0">This year&#x27;s</tspan><tspan x="685.333" dy="12">total</tspan></text></svg>
+  
+  <p class="source">Source: <a href="https://vigoledger.org/">County council, Aug 12</a></p>
+  
+  <div class="fallback"><details><summary>dataTable</summary><table class="data-table"><thead><tr><th>Step</th><th>Amount</th></tr></thead><tbody><tr><td>Building maintenance</td><td>$0</td></tr><tr><td>Emergency repairs</td><td>$520k</td></tr></tbody></table></details></div>
+</figure>
+
+<figure class="chart" id="sankey-drug-court">
+  <h2 class="title">Drug court: which fund pays</h2>
+  <p class="caption">The program may need $250,000 from county general instead of opioid settlement money.</p>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 840 320" width="100%" preserveAspectRatio="xMidYMid meet" style="max-width:840px;height:auto;display:block"><title>Drug court: which fund pays</title><desc>Link width encodes dollar value.</desc><path d="M 168 28 C 419 28, 419 38, 670 38 L 670 40 C 419 40, 419 30, 168 30 Z" fill="#8a8378" fill-opacity="1" stroke="none" data-from="opioid" data-to="program" data-value="0.0" data-px="2.0"/>
+<text x="419" y="28" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">n/a</text>
+<text x="419" y="44" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">this year</text>
+<path d="M 168 84 C 419 84, 419 40, 670 40 L 670 240 C 419 240, 419 284, 168 284 Z" fill="#2f4a3c" fill-opacity="0.85" stroke="none" data-from="general" data-to="program" data-value="250000.0" data-px="200.0"/>
+<text x="419" y="166" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#efe6d0" text-anchor="middle" font-weight="600">$250k proposed</text>
+<rect x="150" y="28" width="18" height="36" fill="#8a8378" data-id="opioid" data-throughput="0.0" data-px="label-box"/>
+<text x="142" y="42" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="end"><tspan x="142" dy="0">Opioid</tspan><tspan x="142" dy="13">settlement</tspan></text>
+<rect x="150" y="84" width="18" height="200" fill="#161410" data-id="general" data-throughput="250000.0" data-px="200.0"/>
+<text x="142" y="98" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="end">County general</text>
+<rect x="670" y="38" width="18" height="200" fill="#161410" data-id="program" data-throughput="250000.0" data-px="200.0"/>
+<text x="696" y="52" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="start"><tspan x="696" dy="0">Drug-treatment</tspan><tspan x="696" dy="13">court</tspan></text></svg>
+  
+  <p class="source">Source: <a href="https://vigoledger.org/">County council, Aug 12</a></p>
+  
+  <div class="fallback"><details><summary>dataTable</summary><table class="data-table"><thead><tr><th>From</th><th>To</th><th>Amount</th></tr></thead><tbody><tr><td>opioid</td><td>program</td><td>$0</td></tr><tr><td>general</td><td>program</td><td>$250k</td></tr></tbody></table></details></div>
+</figure>
+
+<figure class="chart" id="sankey-911">
+  <h2 class="title">911 fund: in vs out</h2>
+  <p class="caption">The county&#x27;s 911 fund is set to spend more than it takes in next year.</p>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 840 320" width="100%" preserveAspectRatio="xMidYMid meet" style="max-width:840px;height:auto;display:block"><title>911 fund: in vs out</title><desc>Link width encodes dollar value.</desc><path d="M 168 120 C 289 120, 289 120, 410 120 L 410 122 C 289 122, 289 122, 168 122 Z" fill="#8a8378" fill-opacity="1" stroke="none" data-from="receipts" data-to="fund" data-value="0.0" data-px="2.0"/>
+<text x="289" y="115" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">n/a</text>
+<path d="M 428 120 C 549 120, 549 120, 670 120 L 670 122 C 549 122, 549 122, 428 122 Z" fill="#8a8378" fill-opacity="1" stroke="none" data-from="fund" data-to="ops" data-value="0.0" data-px="2.0"/>
+<text x="549" y="115" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">n/a</text>
+<rect x="150" y="120" width="18" height="36" fill="#8a8378" data-id="receipts" data-throughput="0.0" data-px="label-box"/>
+<text x="142" y="134" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="end">911 receipts</text>
+<rect x="410" y="120" width="18" height="36" fill="#8a8378" data-id="fund" data-throughput="0.0" data-px="label-box"/>
+<text x="436" y="134" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="start">911 fund</text>
+<rect x="670" y="120" width="18" height="36" fill="#8a8378" data-id="ops" data-throughput="0.0" data-px="label-box"/>
+<text x="696" y="134" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="start"><tspan x="696" dy="0">Dispatch &amp;</tspan><tspan x="696" dy="13">operations</tspan></text></svg>
+  
+  <p class="source">Source: <a href="https://vigoledger.org/">County council, Aug 13</a></p>
+  
+  <div class="fallback"><details><summary>dataTable</summary><table class="data-table"><thead><tr><th>From</th><th>To</th><th>Amount</th></tr></thead><tbody><tr><td>receipts</td><td>fund</td><td>$0</td></tr><tr><td>fund</td><td>ops</td><td>$0</td></tr></tbody></table></details></div>
+</figure>
+
+<figure class="chart" id="bar">
+  <h2 class="title">This week&#x27;s appropriations</h2>
+  <p class="caption">The largest add this week is $520,000 for building-maintenance emergencies.</p>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 840 414" width="100%" preserveAspectRatio="xMidYMid meet" style="max-width:840px;height:auto;display:block"><title>This week&#x27;s appropriations</title><desc>Bar length proportional to dollars.</desc><line x1="300" y1="24" x2="300" y2="370" stroke="#c4b496" stroke-width="1"/>
+<text x="300" y="402" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$0</text>
+<line x1="388.462" y1="24" x2="388.462" y2="370" stroke="#c4b496" stroke-width="1"/>
+<text x="388.462" y="402" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$100k</text>
+<line x1="476.923" y1="24" x2="476.923" y2="370" stroke="#c4b496" stroke-width="1"/>
+<text x="476.923" y="402" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$200k</text>
+<line x1="565.385" y1="24" x2="565.385" y2="370" stroke="#c4b496" stroke-width="1"/>
+<text x="565.385" y="402" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$300k</text>
+<line x1="653.846" y1="24" x2="653.846" y2="370" stroke="#c4b496" stroke-width="1"/>
+<text x="653.846" y="402" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$400k</text>
+<line x1="742.308" y1="24" x2="742.308" y2="370" stroke="#c4b496" stroke-width="1"/>
+<text x="742.308" y="402" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$500k</text>
+<text x="286" y="44" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="end"><tspan x="286" dy="0">Building</tspan><tspan x="286" dy="14">emergencies</tspan></text>
+<rect x="300" y="28" width="460" height="38" fill="#2a2520" data-id="buildings" data-value="520000" data-px="460.0"/>
+<text x="770" y="52" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410">$520k</text>
+<text x="286" y="104" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="end"><tspan x="286" dy="0">Clinton Road</tspan><tspan x="286" dy="14">traffic study</tspan></text>
+<rect x="300" y="88" width="414.885" height="38" fill="#2a2520" data-id="traffic" data-value="469000" data-px="414.88"/>
+<text x="724.885" y="112" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410">$469k</text>
+<text x="286" y="171" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="end">Rescue truck</text>
+<rect x="300" y="148" width="199.038" height="38" fill="#2a2520" data-id="rescue" data-value="225000" data-px="199.04"/>
+<text x="509.038" y="172" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410">$225k</text>
+<text x="286" y="231" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="end">Plow</text>
+<rect x="300" y="208" width="88.462" height="38" fill="#2a2520" data-id="plow" data-value="100000" data-px="88.46"/>
+<text x="398.462" y="232" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410">$100k</text>
+<text x="286" y="291" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="end">Warming center</text>
+<rect x="300" y="268" width="42.019" height="38" fill="#2a2520" data-id="warming" data-value="47500" data-px="42.02"/>
+<text x="352.019" y="292" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410">$47.5k</text>
+<text x="286" y="351" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="end">Susie&#x27;s Place</text>
+<rect x="300" y="328" width="39.808" height="38" fill="#2a2520" data-id="susie" data-value="45000" data-px="39.81"/>
+<text x="349.808" y="352" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410">$45k</text></svg>
+  
+  <p class="source">Source: <a href="https://vigoledger.org/">County council, Aug 12–13</a></p>
+  
+  <div class="fallback"><details><summary>dataTable</summary><table class="data-table"><thead><tr><th>Item</th><th>Amount</th></tr></thead><tbody><tr><td>Building emergencies</td><td>$520k</td></tr><tr><td>Clinton Road traffic study</td><td>$469k</td></tr><tr><td>Rescue truck</td><td>$225k</td></tr><tr><td>Plow</td><td>$100k</td></tr><tr><td>Warming center</td><td>$47.5k</td></tr><tr><td>Susie&#x27;s Place</td><td>$45k</td></tr></tbody></table></details></div>
+</figure>
+
+<figure class="chart" id="stacked-bar">
+  <h2 class="title">Housing loan fund</h2>
+  <p class="caption">A $2 million housing fund, split evenly between the city and the county.</p>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 840 148" width="100%" preserveAspectRatio="xMidYMid meet" style="max-width:840px;height:auto;display:block"><title>Housing loan fund</title><desc>Segment length proportional to dollars; segments add.</desc><line x1="260" y1="32" x2="260" y2="96" stroke="#c4b496" stroke-width="1"/>
+<text x="260" y="136" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$0</text>
+<line x1="500" y1="32" x2="500" y2="96" stroke="#c4b496" stroke-width="1"/>
+<text x="500" y="136" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$1M</text>
+<line x1="740" y1="32" x2="740" y2="96" stroke="#c4b496" stroke-width="1"/>
+<text x="740" y="136" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$2M</text>
+<text x="250" y="76" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="end">Housing loan fund</text>
+<rect x="260" y="36" width="240" height="52" fill="#2f4a3c" data-id="city" data-value="1000000" data-px="240.0"/>
+<text x="380" y="76" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#efe6d0" text-anchor="middle">City $1M</text>
+<rect x="500" y="36" width="240" height="52" fill="#3e4f6d" data-id="county" data-value="1000000" data-px="240.0"/>
+<text x="620" y="76" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#efe6d0" text-anchor="middle">County $1M</text>
+<text x="748" y="76" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#161410">$2M</text></svg>
+  <div class="legend"><span class="swatch"><i style="background:#2f4a3c"></i>City</span><span class="swatch"><i style="background:#3e4f6d"></i>County</span></div>
+  <p class="source">Source: <a href="https://vigoledger.org/">City / county, this edition</a></p>
+  
+  <div class="fallback"><details><summary>dataTable</summary><table class="data-table"><thead><tr><th>Payer</th><th>Amount</th></tr></thead><tbody><tr><td>City</td><td>$1M</td></tr><tr><td>County</td><td>$1M</td></tr></tbody></table></details></div>
+</figure>
+
+<figure class="chart" id="grouped-bar">
+  <h2 class="title">CBD TIF: collected vs spent</h2>
+  <p class="caption">The CBD TIF spent $46,494 more than it collected.</p>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 840 132" width="100%" preserveAspectRatio="xMidYMid meet" style="max-width:840px;height:auto;display:block"><title>CBD TIF: collected vs spent</title><desc>Values in this edition are 0; axes and n/a, no invented heights.</desc><line x1="180" y1="24" x2="180" y2="84" stroke="#161410" stroke-width="1"/>
+<text x="180" y="118" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$0</text>
+<text x="170" y="56" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="end">CBD TIF</text>
+<line x1="180" y1="38" x2="196" y2="38" stroke="#8a8378" stroke-width="2.0"/>
+<text x="202" y="44" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346">Collected: n/a</text>
+<line x1="180" y1="66" x2="196" y2="66" stroke="#8a8378" stroke-width="2.0"/>
+<text x="202" y="72" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346">Spent: n/a</text></svg>
+  <div class="legend"><span class="swatch"><i style="background:#2f4a3c"></i>Collected</span><span class="swatch"><i style="background:#9b2335"></i>Spent</span></div>
+  <p class="source">Source: <a href="https://vigoledger.org/">Redevelopment, this edition</a></p>
+  
+  <div class="fallback"><details><summary>dataTable</summary><table class="data-table"><thead><tr><th>Series</th><th>CBD TIF</th></tr></thead><tbody><tr><td>Collected</td><td>$0</td></tr><tr><td>Spent</td><td>$0</td></tr></tbody></table></details></div>
+</figure>
+
+<figure class="chart" id="slope">
+  <h2 class="title">Cuts and jumps, this edition</h2>
+  <p class="caption">Clinton Road was cut $2.5 million; the clerk&#x27;s scanning line jumped $100,000.</p>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 840 524" width="100%" preserveAspectRatio="xMidYMid meet" style="max-width:840px;height:auto;display:block"><title>Cuts and jumps, this edition</title><desc>Shared linear y-scale; lines are not equally spaced.</desc><line x1="300" y1="64" x2="300" y2="444" stroke="#161410" stroke-width="1.5"/>
+<line x1="560" y1="64" x2="560" y2="444" stroke="#161410" stroke-width="1.5"/>
+<text x="300" y="28" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">As budgeted</text>
+<text x="560" y="28" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">Adopted</text>
+<line x1="300" y1="444" x2="308" y2="444" stroke="#c4b496" stroke-width="1"/>
+<line x1="552" y1="444" x2="560" y2="444" stroke="#c4b496" stroke-width="1"/>
+<text x="430" y="456" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$0</text>
+<line x1="300" y1="254" x2="308" y2="254" stroke="#c4b496" stroke-width="1"/>
+<line x1="552" y1="254" x2="560" y2="254" stroke="#c4b496" stroke-width="1"/>
+<text x="430" y="266" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$1.5M</text>
+<line x1="300" y1="64" x2="308" y2="64" stroke="#c4b496" stroke-width="1"/>
+<line x1="552" y1="64" x2="560" y2="64" stroke="#c4b496" stroke-width="1"/>
+<text x="430" y="58" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$3M</text>
+<line x1="300" y1="64" x2="560" y2="380.667" stroke="#9b2335" stroke-width="2" data-id="clinton" data-from="3000000" data-to="500000"/>
+<circle cx="300" cy="64" r="4.5" fill="#9b2335"/>
+<circle cx="560" cy="380.667" r="4.5" fill="#9b2335"/>
+<text x="284" y="72" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="end">Clinton Road</text>
+<text x="284" y="90" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#9b2335" text-anchor="end">$3M</text>
+<text x="576" y="370.667" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410">Clinton Road</text>
+<text x="576" y="388.667" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#9b2335">$500k</text>
+<line x1="300" y1="442.86" x2="560" y2="430.193" stroke="#2f4a3c" stroke-width="2" data-id="clerk" data-from="9000" data-to="109000"/>
+<circle cx="300" cy="442.86" r="4.5" fill="#2f4a3c"/>
+<circle cx="560" cy="430.193" r="4.5" fill="#2f4a3c"/>
+<text x="284" y="426" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="end">Clerk scanning</text>
+<text x="284" y="444" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#2f4a3c" text-anchor="end">$9k</text>
+<text x="576" y="420.193" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410">Clerk scanning</text>
+<text x="576" y="438.193" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#2f4a3c">$109k</text></svg>
+  <div class="legend"><span class="swatch"><i style="background:#9b2335"></i>Cut</span><span class="swatch"><i style="background:#2f4a3c"></i>Increase</span></div>
+  <p class="source">Source: <a href="https://vigoledger.org/">County council, Aug 13</a></p>
+  
+  <div class="fallback"><details><summary>dataTable</summary><table class="data-table"><thead><tr><th>Item</th><th>From</th><th>To</th></tr></thead><tbody><tr><td>Clinton Road</td><td>$3M</td><td>$500k</td></tr><tr><td>Clerk scanning</td><td>$9k</td><td>$109k</td></tr></tbody></table></details></div>
+</figure>
+
+<figure class="chart" id="treemap">
+  <h2 class="title">This week&#x27;s appropriations</h2>
+  <p class="caption">Six adds, sized by dollars. Building emergencies and the Clinton Road study dominate.</p>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 840 420" width="100%" preserveAspectRatio="xMidYMid meet" style="max-width:840px;height:auto;display:block"><title>This week&#x27;s appropriations</title><desc>Leaf area proportional to dollars (squarify).</desc><rect x="20" y="16" width="295.77" height="360" fill="#1f4d3a" stroke="#efe6d0" stroke-width="1.5" data-id="buildings" data-value="520000.0" data-area="106477.07"/>
+<text x="34" y="36" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#efe6d0">Building emergencies</text>
+<text x="34" y="58" font-size="16" font-family="Public Sans, system-ui, sans-serif" fill="#efe6d0" font-weight="600">$520k</text>
+<rect x="315.77" y="16" width="266.761" height="360" fill="#24364a" stroke="#efe6d0" stroke-width="1.5" data-id="traffic" data-value="469000.0" data-area="96034.13"/>
+<text x="329.77" y="36" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#efe6d0">Traffic study</text>
+<text x="329.77" y="58" font-size="16" font-family="Public Sans, system-ui, sans-serif" fill="#efe6d0" font-weight="600">$469k</text>
+<rect x="582.531" y="16" width="237.469" height="194.012" fill="#4a3f35" stroke="#efe6d0" stroke-width="1.5" data-id="rescue" data-value="225000.0" data-area="46071.81"/>
+<text x="596.531" y="36" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#efe6d0">Rescue truck</text>
+<text x="596.531" y="58" font-size="16" font-family="Public Sans, system-ui, sans-serif" fill="#efe6d0" font-weight="600">$225k</text>
+<rect x="582.531" y="210.012" width="123.36" height="165.988" fill="#6b5344" stroke="#efe6d0" stroke-width="1.5" data-id="plow" data-value="100000.0" data-area="20476.36"/>
+<text x="596.531" y="230.012" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#efe6d0">Plow</text>
+<text x="596.531" y="252.012" font-size="16" font-family="Public Sans, system-ui, sans-serif" fill="#efe6d0" font-weight="600">$100k</text>
+<rect x="705.892" y="210.012" width="114.108" height="85.237" fill="#8a7060" stroke="#efe6d0" stroke-width="1.5" data-id="warming" data-value="47500.0" data-area="9726.27"/>
+<text x="719.892" y="257.631" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410" font-weight="600">$47.5k</text>
+<rect x="705.892" y="295.249" width="114.108" height="80.751" fill="#5c564c" stroke="#efe6d0" stroke-width="1.5" data-id="susie" data-value="45000.0" data-area="9214.36"/>
+<text x="719.892" y="340.625" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#efe6d0" font-weight="600">$45k</text></svg>
+  <div class="legend"><span class="swatch"><i style="background:#1f4d3a"></i>Building emergencies</span><span class="swatch"><i style="background:#24364a"></i>Traffic study</span><span class="swatch"><i style="background:#4a3f35"></i>Rescue truck</span><span class="swatch"><i style="background:#6b5344"></i>Plow</span><span class="swatch"><i style="background:#8a7060"></i>Warming center</span><span class="swatch"><i style="background:#5c564c"></i>Susie&#x27;s Place</span></div>
+  <p class="source">Source: <a href="https://vigoledger.org/">County council, Aug 12–13</a></p>
+  
+  <div class="fallback"><details><summary>dataTable</summary><table class="data-table"><thead><tr><th>Item</th><th>Amount</th></tr></thead><tbody><tr><td>Building emergencies</td><td>$520k</td></tr><tr><td>Traffic study</td><td>$469k</td></tr><tr><td>Rescue truck</td><td>$225k</td></tr><tr><td>Plow</td><td>$100k</td></tr><tr><td>Warming center</td><td>$47.5k</td></tr><tr><td>Susie&#x27;s Place</td><td>$45k</td></tr></tbody></table></details></div>
+</figure>
+
+<figure class="chart" id="bullet">
+  <h2 class="title">Community Corrections restored</h2>
+  <p class="caption">Council restored $200,000 to Community Corrections after the line was pulled by mistake.</p>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 840 144" width="100%" preserveAspectRatio="xMidYMid meet" style="max-width:840px;height:auto;display:block"><title>Community Corrections restored</title><desc>Qualitative bands, actual bar, target tick on one linear scale.</desc><text x="280" y="134" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$0</text>
+<text x="520" y="134" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$100k</text>
+<text x="760" y="134" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$200k</text>
+<text x="268" y="68" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="end">Community Corrections</text>
+<rect x="280" y="44" width="480" height="40" fill="#e4d8c0" data-range="200000" data-px="480.0"/>
+<rect x="280" y="44" width="240" height="40" fill="#cfc19f" data-range="100000" data-px="240.0"/>
+<rect x="280" y="58" width="480" height="12" fill="#161410" data-id="cc" data-actual="200000" data-px="480.0"/>
+<line x1="760" y1="42" x2="760" y2="86" stroke="#9b2335" stroke-width="2.5" data-target="200000"/>
+<text x="768" y="68" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#161410">$200k</text></svg>
+  <div class="legend"><span class="swatch"><i style="background:#e4d8c0"></i>Range to $100k</span><span class="swatch"><i style="background:#cfc19f"></i>Range to $200k</span><span class="swatch"><i style="background:#161410"></i>Actual</span><span class="swatch"><i style="background:#9b2335"></i>Target</span></div>
+  <p class="source">Source: <a href="https://vigoledger.org/">County council, this edition</a></p>
+  
+  <div class="fallback"><details><summary>dataTable</summary><table class="data-table"><thead><tr><th>Item</th><th>Actual</th><th>Target</th></tr></thead><tbody><tr><td>Community Corrections</td><td>$200k</td><td>$200k</td></tr></tbody></table></details></div>
+</figure>
+
+<figure class="chart" id="alluvial">
+  <h2 class="title">Appropriations through the week</h2>
+  <p class="caption">Dollars that made it to adoption this week, sized by the add.</p>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 840 460" width="100%" preserveAspectRatio="xMidYMid meet" style="max-width:840px;height:auto;display:block"><title>Appropriations through the week</title><desc>Band width proportional to dollars across named stages.</desc><text x="40" y="22" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346">Introduced</text>
+<text x="800" y="22" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="end">Adopted</text>
+<path d="M 54 40 C 420 40, 420 40, 786 40 L 786 182.208 C 420 182.208, 420 182.208, 54 182.208 Z" fill="#2f4a3c" fill-opacity="0.88" data-value="520000" data-px="142.21"/>
+<rect x="40" y="40" width="14" height="142.208" fill="#2f4a3c"/>
+<rect x="786" y="40" width="14" height="142.208" fill="#2f4a3c"/>
+<text x="70" y="115.104" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#efe6d0" font-weight="600">Building emergencies  $520k</text>
+<path d="M 54 196.208 C 420 196.208, 420 196.208, 786 196.208 L 786 324.468 C 420 324.468, 420 324.468, 54 324.468 Z" fill="#3e4f6d" fill-opacity="0.88" data-value="469000" data-px="128.26"/>
+<rect x="40" y="196.208" width="14" height="128.26" fill="#3e4f6d"/>
+<rect x="786" y="196.208" width="14" height="128.26" fill="#3e4f6d"/>
+<text x="70" y="264.338" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#efe6d0" font-weight="600">Traffic study  $469k</text>
+<path d="M 54 338.468 C 420 338.468, 420 338.468, 786 338.468 L 786 400 C 420 400, 420 400, 54 400 Z" fill="#6b5344" fill-opacity="0.88" data-value="225000" data-px="61.53"/>
+<rect x="40" y="338.468" width="14" height="61.532" fill="#6b5344"/>
+<rect x="786" y="338.468" width="14" height="61.532" fill="#6b5344"/>
+<text x="70" y="373.234" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#efe6d0" font-weight="600">Rescue truck  $225k</text></svg>
+  <div class="legend"><span class="swatch"><i style="background:#2f4a3c"></i>Building emergencies</span><span class="swatch"><i style="background:#3e4f6d"></i>Traffic study</span><span class="swatch"><i style="background:#6a4e36"></i>Rescue truck</span></div>
+  <p class="source">Source: <a href="https://vigoledger.org/">County council, Aug 12–13</a></p>
+  
+  <div class="fallback"><details><summary>dataTable</summary><table class="data-table"><thead><tr><th>From</th><th>To</th><th>Amount</th></tr></thead><tbody><tr><td>bldg-i</td><td>bldg-a</td><td>$520k</td></tr><tr><td>traffic-i</td><td>traffic-a</td><td>$469k</td></tr><tr><td>rescue-i</td><td>rescue-a</td><td>$225k</td></tr></tbody></table></details></div>
+</figure>
+
+<figure class="chart" id="dot-plot">
+  <h2 class="title">Smaller funds, same scale</h2>
+  <p class="caption">Plow, warming center, Susie&#x27;s Place, and Make My Move sit within $60k of each other.</p>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 840 180" width="100%" preserveAspectRatio="xMidYMid meet" style="max-width:840px;height:auto;display:block"><title>Smaller funds, same scale</title><desc>Dot x-position encodes dollars on a shared linear scale.</desc><line x1="180" y1="16" x2="180" y2="148" stroke="#c4b496" stroke-width="1"/>
+<text x="180" y="168" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$0</text>
+<line x1="280" y1="16" x2="280" y2="148" stroke="#c4b496" stroke-width="1"/>
+<text x="280" y="168" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$25k</text>
+<line x1="380" y1="16" x2="380" y2="148" stroke="#c4b496" stroke-width="1"/>
+<text x="380" y="168" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$50k</text>
+<line x1="480" y1="16" x2="480" y2="148" stroke="#c4b496" stroke-width="1"/>
+<text x="480" y="168" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$75k</text>
+<line x1="580" y1="16" x2="580" y2="148" stroke="#c4b496" stroke-width="1"/>
+<text x="580" y="168" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$100k</text>
+<text x="168" y="40" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="end">Plow</text>
+<line x1="180" y1="36" x2="580" y2="36" stroke="#c4b496" stroke-width="1"/>
+<circle cx="580" cy="36" r="6" fill="#161410" data-id="plow" data-value="100000" data-px="400.0"/>
+<text x="592" y="40" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#161410">$100k</text>
+<text x="168" y="72" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="end">Make My Move</text>
+<line x1="180" y1="68" x2="530" y2="68" stroke="#c4b496" stroke-width="1"/>
+<circle cx="530" cy="68" r="6" fill="#161410" data-id="mmm" data-value="87500" data-px="350.0"/>
+<text x="542" y="72" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#161410">$87.5k</text>
+<text x="168" y="104" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="end">Warming center</text>
+<line x1="180" y1="100" x2="370" y2="100" stroke="#c4b496" stroke-width="1"/>
+<circle cx="370" cy="100" r="6" fill="#161410" data-id="warming" data-value="47500" data-px="190.0"/>
+<text x="382" y="104" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#161410">$47.5k</text>
+<text x="168" y="136" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="end">Susie&#x27;s Place</text>
+<line x1="180" y1="132" x2="360" y2="132" stroke="#c4b496" stroke-width="1"/>
+<circle cx="360" cy="132" r="6" fill="#161410" data-id="susie" data-value="45000" data-px="180.0"/>
+<text x="372" y="136" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#161410">$45k</text></svg>
+  
+  <p class="source">Source: <a href="https://vigoledger.org/">This edition</a></p>
+  
+  <div class="fallback"><details><summary>dataTable</summary><table class="data-table"><thead><tr><th>Item</th><th>Amount</th></tr></thead><tbody><tr><td>Plow</td><td>$100k</td></tr><tr><td>Make My Move</td><td>$87.5k</td></tr><tr><td>Warming center</td><td>$47.5k</td></tr><tr><td>Susie&#x27;s Place</td><td>$45k</td></tr></tbody></table></details></div>
+</figure>
+
+<figure class="chart" id="range-plot">
+  <h2 class="title">Local share of community corrections</h2>
+  <p class="caption">State cuts push about $700,000 in community-corrections costs onto the county general fund.</p>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 840 192" width="100%" preserveAspectRatio="xMidYMid meet" style="max-width:840px;height:auto;display:block"><title>Local share of community corrections</title><desc>Line from min to max, mark at mid, linear x.</desc><line x1="280" y1="44" x2="280" y2="136" stroke="#c4b496" stroke-width="1"/>
+<text x="280" y="180" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$0</text>
+<line x1="520" y1="44" x2="520" y2="136" stroke="#c4b496" stroke-width="1"/>
+<text x="520" y="180" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$350k</text>
+<line x1="760" y1="44" x2="760" y2="136" stroke="#c4b496" stroke-width="1"/>
+<text x="760" y="180" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$700k</text>
+<text x="268" y="96" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="end">Community corrections (local)</text>
+<line x1="280" y1="92" x2="760" y2="92" stroke="#161410" stroke-width="3" data-min="0" data-max="700000" data-px="480.0"/>
+<circle cx="280" cy="92" r="4" fill="#161410"/>
+<circle cx="760" cy="92" r="4" fill="#161410"/>
+<circle cx="760" cy="92" r="7" fill="#9b2335" stroke="#161410" stroke-width="1" data-mid="700000"/></svg>
+  
+  <p class="source">Source: <a href="https://vigoledger.org/">County council, this edition</a></p>
+  
+  <div class="fallback"><details><summary>dataTable</summary><table class="data-table"><thead><tr><th>Item</th><th>Min</th><th>Mid</th><th>Max</th></tr></thead><tbody><tr><td>Community corrections (local)</td><td>$0</td><td>$700k</td><td>$700k</td></tr></tbody></table></details></div>
+</figure>
+
+<figure class="chart" id="line">
+  <h2 class="title">911 fund, next year vs this year</h2>
+  <p class="caption">The county&#x27;s 911 fund is set to spend more than it takes in next year.</p>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 840 280" width="100%" preserveAspectRatio="xMidYMid meet" style="max-width:840px;height:auto;display:block"><title>911 fund, next year vs this year</title><desc>Zeros: axes and n/a, no invented slope.</desc><line x1="80" y1="204" x2="800" y2="204" stroke="#161410" stroke-width="1"/>
+<line x1="80" y1="24" x2="80" y2="204" stroke="#161410" stroke-width="1"/>
+<line x1="80" y1="204" x2="80" y2="209" stroke="#161410" stroke-width="1"/>
+<text x="80" y="262" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">This year</text>
+<line x1="800" y1="204" x2="800" y2="209" stroke="#161410" stroke-width="1"/>
+<text x="800" y="262" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">Next year</text>
+<text x="90" y="38" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346">n/a</text>
+<text x="72" y="208" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="end">$0</text></svg>
+  <div class="legend"><span class="swatch"><i style="background:#2f4a3c"></i>Receipts</span><span class="swatch"><i style="background:#9b2335"></i>Outlays</span></div>
+  <p class="source">Source: <a href="https://vigoledger.org/">County council, Aug 13</a></p>
+  
+  <div class="fallback"><details><summary>dataTable</summary><table class="data-table"><thead><tr><th>Series</th><th>This year</th><th>Next year</th></tr></thead><tbody><tr><td>Receipts</td><td>$0</td><td>$0</td></tr><tr><td>Outlays</td><td>$0</td><td>$0</td></tr></tbody></table></details></div>
+</figure>
+
+<figure class="chart" id="stacked-area">
+  <h2 class="title">Housing fund by payer</h2>
+  <p class="caption">City and county each put up $1 million. A second year turns this into a mix-over-time chart.</p>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 840 340" width="100%" preserveAspectRatio="xMidYMid meet" style="max-width:840px;height:auto;display:block"><title>Housing fund by payer</title><desc>One period: stacked column with heights from the values.</desc><line x1="320" y1="280" x2="520" y2="280" stroke="#161410" stroke-width="1"/>
+<rect x="340" y="160" width="160" height="120" fill="#2f4a3c" data-id="city" data-value="1000000" data-px="120.0"/>
+<text x="420" y="225" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#efe6d0" text-anchor="middle">City  $1M</text>
+<rect x="340" y="40" width="160" height="120" fill="#3e4f6d" data-id="county" data-value="1000000" data-px="120.0"/>
+<text x="420" y="105" font-size="13" font-family="Public Sans, system-ui, sans-serif" fill="#efe6d0" text-anchor="middle">County  $1M</text>
+<text x="420" y="300" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">This year</text>
+<text x="420" y="34" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="middle">$2M</text></svg>
+  <div class="legend"><span class="swatch"><i style="background:#2f4a3c"></i>City</span><span class="swatch"><i style="background:#3e4f6d"></i>County</span></div>
+  <p class="source">Source: <a href="https://vigoledger.org/">City / county, this edition</a></p>
+  
+  <div class="fallback"><details><summary>dataTable</summary><table class="data-table"><thead><tr><th>Series</th><th>This year</th></tr></thead><tbody><tr><td>City</td><td>$1M</td></tr><tr><td>County</td><td>$1M</td></tr></tbody></table></details></div>
+</figure>
+
+<figure class="chart" id="histogram">
+  <h2 class="title">This week&#x27;s adds, by size</h2>
+  <p class="caption">Six appropriations. Two sit above $400k; the rest are $225k and under.</p>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 840 380" width="100%" preserveAspectRatio="xMidYMid meet" style="max-width:840px;height:auto;display:block"><title>This week&#x27;s adds, by size</title><desc>Bar height is the count of observations in each dollar bin.</desc><line x1="72" y1="264" x2="692" y2="264" stroke="#161410" stroke-width="1"/>
+<line x1="72" y1="44" x2="72" y2="264" stroke="#161410" stroke-width="1"/>
+<line x1="68" y1="264" x2="72" y2="264" stroke="#161410" stroke-width="1"/>
+<text x="62" y="268" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="end">0</text>
+<line x1="68" y1="154" x2="72" y2="154" stroke="#161410" stroke-width="1"/>
+<text x="62" y="158" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="end">1</text>
+<line x1="68" y1="44" x2="72" y2="44" stroke="#161410" stroke-width="1"/>
+<text x="62" y="48" font-size="11" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="end">2</text>
+<text x="16" y="56" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346">count</text>
+<rect x="72" y="44" width="103.333" height="220" fill="#2a2520" stroke="#efe6d0" stroke-width="1" data-start="0.0" data-end="100000.0" data-count="2" data-px-h="220.0" data-px-w="103.33"/>
+<text x="123.667" y="38" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="middle">2</text>
+<text x="72" y="280" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$0</text>
+<rect x="175.333" y="154" width="103.333" height="110" fill="#2a2520" stroke="#efe6d0" stroke-width="1" data-start="100000.0" data-end="200000.0" data-count="1" data-px-h="110.0" data-px-w="103.33"/>
+<text x="227" y="148" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="middle">1</text>
+<text x="175.333" y="280" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$100k</text>
+<rect x="278.667" y="154" width="103.333" height="110" fill="#2a2520" stroke="#efe6d0" stroke-width="1" data-start="200000.0" data-end="300000.0" data-count="1" data-px-h="110.0" data-px-w="103.33"/>
+<text x="330.333" y="148" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="middle">1</text>
+<text x="278.667" y="280" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$200k</text>
+<text x="382" y="280" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$300k</text>
+<rect x="485.333" y="154" width="103.333" height="110" fill="#2a2520" stroke="#efe6d0" stroke-width="1" data-start="400000.0" data-end="500000.0" data-count="1" data-px-h="110.0" data-px-w="103.33"/>
+<text x="537" y="148" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="middle">1</text>
+<text x="485.333" y="280" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$400k</text>
+<rect x="588.667" y="154" width="103.333" height="110" fill="#2a2520" stroke="#efe6d0" stroke-width="1" data-start="500000.0" data-end="600000.0" data-count="1" data-px-h="110.0" data-px-w="103.33"/>
+<text x="640.333" y="148" font-size="12" font-family="Public Sans, system-ui, sans-serif" fill="#161410" text-anchor="middle">1</text>
+<text x="588.667" y="280" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$500k</text>
+<text x="692" y="280" font-size="10" font-family="Public Sans, system-ui, sans-serif" fill="#5c5346" text-anchor="middle">$600k</text></svg>
+  
+  <p class="source">Source: <a href="https://vigoledger.org/">County council, Aug 12–13</a></p>
+  
+  <div class="fallback"><details><summary>dataTable</summary><table class="data-table"><thead><tr><th>Bin start</th><th>Bin end</th><th>Count</th></tr></thead><tbody><tr><td>$0</td><td>$100k</td><td>$2</td></tr><tr><td>$100k</td><td>$200k</td><td>$1</td></tr><tr><td>$200k</td><td>$300k</td><td>$1</td></tr><tr><td>$300k</td><td>$400k</td><td>$0</td></tr><tr><td>$400k</td><td>$500k</td><td>$1</td></tr><tr><td>$500k</td><td>$600k</td><td>$1</td></tr></tbody></table></details></div>
+</figure>
+  <p class="kicker">formatValue · Editorial §7</p>
+<div class="fmt-strip">
+<div class="fmt-cell"><span class="in">4500 · usd</span><span class="out">$4.5k</span></div>
+<div class="fmt-cell"><span class="in">47500 · usd</span><span class="out">$47.5k</span></div>
+<div class="fmt-cell"><span class="in">469000 · usd</span><span class="out">$469k</span></div>
+<div class="fmt-cell"><span class="in">1000000 · usd</span><span class="out">$1M</span></div>
+<div class="fmt-cell"><span class="in">3000000 · usd</span><span class="out">$3M</span></div>
+<div class="fmt-cell"><span class="in">-500000 · usd</span><span class="out">-$500k</span></div>
+<div class="fmt-cell"><span class="in">10 · percent</span><span class="out">10%</span></div>
+<div class="fmt-cell"><span class="in">84 · count</span><span class="out">84</span></div>
+</div>
+  <p class="note">Not the @agent-clis/diagrams library renderer. Static HTML +
+  inline SVG. Chrome order on each figure: title → caption → stat/stats → plot
+  (annotations on the plot) → legend → source as &lt;a href&gt; → footnote.
+  alt lives in svg &lt;desc&gt;. dataTable under each numeric chart.</p>
+</article>
+</body>
+</html>

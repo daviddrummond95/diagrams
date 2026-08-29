@@ -1,0 +1,49 @@
+type: org
+title: "Bodies the Ledger covers"
+theme: default
+caption: "The Ledger covers the two councils; commissioners, APC, and several appointed boards are not yet a beat."
+source:
+  label: "The Vigo Ledger, About / Vol. I No. 1"
+  href: "https://vigoledger.org/"
+legend:
+  - { label: "Covered", pattern: solid }
+  - { label: "Not yet" }
+alt: "Org boxes on a computed tree: city council, county council, and commissioners on the top rank; budget committee under county council; APC with recommend lines to both councils; remaining boards as empty-stroke not-yet boxes."
+
+nodes:
+  - id: city-council
+    label: "Terre Haute City Council"
+    kind: legislative
+    coverage: covered
+  - id: county-council
+    label: "Vigo County Council"
+    kind: legislative
+    coverage: covered
+  - id: commissioners
+    label: "Vigo County Commissioners"
+    kind: executive
+    coverage: not-yet
+  - id: bpw
+    label: "Terre Haute Board of Public Works"
+    kind: executive
+    coverage: not-yet
+  - id: apc
+    label: "Area Plan Commission"
+    kind: appointed
+    coverage: not-yet
+  - id: redevelopment
+    label: "Terre Haute Redevelopment Commission"
+    kind: appointed
+    coverage: not-yet
+  - id: bza
+    label: "Board of Zoning Appeals"
+    kind: appointed
+    coverage: not-yet
+  - id: budget-committee
+    label: "County budget committee"
+    kind: committee
+    coverage: covered
+edges:
+  - { from: budget-committee, to: county-council, rel: reports-to }
+  - { from: apc, to: city-council, rel: recommends-to }
+  - { from: apc, to: county-council, rel: recommends-to }

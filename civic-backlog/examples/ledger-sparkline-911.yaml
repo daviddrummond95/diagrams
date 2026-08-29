@@ -1,0 +1,17 @@
+type: sparkline
+title: "911 fund, two ordinal points"
+unit: usd
+showEndValue: true
+caption: "Money owns the full 911 line; this sparkline is two ordinal points (receipts $622,236 vs outlays $711,193), not a monthly series."
+source:
+  label: "County budget committee, Aug 13"
+  href: "https://www.vigoledger.org/h/2026-08-13-vigo-county-budget-committee-911-fund-cash-drawdown"
+alt: "Two ordinal points, no dates: 911 next-year receipts 622236 versus outlays 711193. Not a TIF series; the single TIF shortfall of 46494 is not sparklined."
+dataTable:
+  columns: [period, value]
+  records:
+    - ["Receipts", 622236]
+    - ["Outlays", 711193]
+values: [622236, 711193]
+stroke: "#1e3a5f"
+fill: true

@@ -1,0 +1,24 @@
+type: stacked-bar
+title: "Housing loan fund"
+unit: usd
+caption: "A $2 million housing fund, split evenly between the city and the county."
+source:
+  label: "City / county, this edition"
+  href: "https://vigoledger.org/"
+legend: true
+alt: "A $2 million housing loan fund split $1 million city and $1 million county."
+dataTable:
+  columns: [Payer, Amount]
+  records:
+    - [City, 1000000]
+    - [County, 1000000]
+
+categories:
+  - "Housing loan fund"
+series:
+  - id: city
+    label: "City"
+    values: [1000000]
+  - id: county
+    label: "County"
+    values: [1000000]

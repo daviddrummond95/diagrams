@@ -1,0 +1,23 @@
+type: sankey
+title: "911 fund: in vs out"
+unit: usd
+caption: "The county's 911 fund is set to spend more than it takes in next year."
+source:
+  label: "County council, Aug 13"
+  href: "https://vigoledger.org/"
+
+nodes:
+  - id: receipts
+    label: "911 receipts"
+  - id: fund
+    label: "911 fund"
+  - id: ops
+    label: "Dispatch & operations"
+
+links:
+  - from: receipts
+    to: fund
+    value: 0
+  - from: fund
+    to: ops
+    value: 0

@@ -1,0 +1,25 @@
+type: sankey
+title: "Drug court: which fund pays"
+unit: usd
+caption: "The program may need $250,000 from county general instead of opioid settlement money."
+source:
+  label: "County council, Aug 12"
+  href: "https://vigoledger.org/"
+
+nodes:
+  - id: opioid
+    label: "Opioid settlement"
+  - id: general
+    label: "County general"
+  - id: program
+    label: "Drug-treatment court"
+
+links:
+  - from: opioid
+    to: program
+    value: 0
+    label: "this year"
+  - from: general
+    to: program
+    value: 250000
+    label: "proposed"

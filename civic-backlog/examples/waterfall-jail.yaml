@@ -1,0 +1,23 @@
+type: waterfall
+title: "Jail budget: what went up"
+unit: usd
+caption: "Vehicles, repairs, and new body cameras are why the jail budget rose."
+source:
+  label: "County council, Aug 12"
+  href: "https://vigoledger.org/"
+
+start:
+  label: "Prior jail budget"
+  value: 0
+steps:
+  - id: vehicles
+    label: "Vehicles"
+    value: 65000
+  - id: repairs
+    label: "Repairs"
+    value: 0
+  - id: cameras
+    label: "Body cameras"
+    value: 0
+end:
+  label: "Proposed jail budget"

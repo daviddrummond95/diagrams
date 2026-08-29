@@ -1,0 +1,28 @@
+type: weekstrip
+title: "Vol. I No. 1 in time"
+from: "2026-03-05"
+to: "2026-08-25"
+caption: "Seventy-eight highlights, March 5 through August 25. Spring is sparse; the record piles up the week of August 4."
+source:
+  label: "The Vigo Ledger, Vol. I No. 1"
+  href: "https://www.vigoledger.org/"
+alt: "Highlight counts by meeting date from 2026-03-05 to 2026-08-25. Peak 12 on August 4; 10 on July 9; dense August cluster."
+
+marks:
+  - { date: "2026-03-05", count: 6,  label: "HB1001 / first indexed" }
+  - { date: "2026-03-12", count: 2 }
+  - { date: "2026-04-02", count: 3,  label: "N 12th held" }
+  - { date: "2026-04-09", count: 5,  label: "N 12th passed" }
+  - { date: "2026-05-07", count: 2,  label: "Zoning rewrite" }
+  - { date: "2026-05-14", count: 2 }
+  - { date: "2026-06-04", count: 3 }
+  - { date: "2026-06-11", count: 2,  label: "Wheel tax held" }
+  - { date: "2026-07-09", count: 10, label: "Wheel tax adopted" }
+  - { date: "2026-08-04", count: 12, label: "Busier Tuesday" }
+  - { date: "2026-08-06", count: 8 }
+  - { date: "2026-08-11", count: 1 }
+  - { date: "2026-08-12", count: 9,  label: "Wed 5pm special" }
+  - { date: "2026-08-13", count: 7 }
+  - { date: "2026-08-18", count: 4 }
+  - { date: "2026-08-24", count: 1 }
+  - { date: "2026-08-25", count: 1 }

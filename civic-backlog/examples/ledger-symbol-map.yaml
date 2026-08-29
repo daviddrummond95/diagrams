@@ -1,0 +1,45 @@
+type: symbol-map
+title: "Sites, not districts"
+unit: count
+caption: "Cameras, a park, and a museum are points. East Side school has no site yet, so it is not on the map."
+source:
+  label: "City council / VCSC, Vol. I No. 1"
+  href: "https://vigoledger.org/"
+legend:
+  title: "Type"
+  items:
+    - label: "License-plate camera"
+      color: "#3F3A36"
+    - label: "Park"
+      color: "#7A8F4F"
+    - label: "Museum / park proposal"
+      color: "#5B7C6A"
+
+basemap:
+  city: Terre Haute
+  county: Vigo
+  state: IN
+
+sizeBy: count
+colorBy: kind
+
+points:
+  - id: cameras-downtown
+    label: "Plate cameras (downtown cluster)"
+    lon: -87.41391
+    lat: 39.46670
+    kind: camera
+    count: 12
+  - id: rea-park
+    label: "Rea Park"
+    lon: -87.40203
+    lat: 39.42259
+    kind: park
+    count: 1
+    note: "Ledger spelling: Ray Park"
+  - id: childrens-museum
+    label: "Children's Museum"
+    lon: -87.40598
+    lat: 39.46621
+    kind: museum
+    count: 1

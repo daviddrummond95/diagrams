@@ -1,0 +1,46 @@
+type: vote-matrix
+title: "Ray Park and Riley Trail, Apr 2"
+theme: default
+caption: "Council appropriated $20,000 for Ray Park and the Riley Trail; seven members were present, two absent."
+source:
+  label: "City council, Apr 2"
+  href: "https://vigoledger.org/"
+legend:
+  - { label: "Yea", pattern: solid }
+  - { label: "Nay", pattern: hatch }
+  - { label: "Absent" }
+stat:
+  display: "7 present, 2 absent"
+alt: "Nine city-council members as rows and one Ray Park column. Only Loudermilk and Hinton are filled yea (mover and seconder). Other cells are empty, not guessed absents or yeas. Tally: 7 present, 2 absent."
+dataTable:
+  columns: [Member, Seat, Vote]
+  records:
+    - [Cheryl Loudermilk, District 3, yea]
+    - [Kandace G. Hinton, District 1, yea]
+  summary: "Sparse cells only. Omitted members are unknown, not absent."
+
+body: "Terre Haute City Council"
+date: "2026-04-02"
+members:
+  - { id: azar, label: "George Azar", seat: "At-large" }
+  - { id: boland, label: "Tammy Boland", seat: "At-large" }
+  - { id: debaun, label: "Curtis DeBaun IV", seat: "At-large" }
+  - { id: hinton, label: "Kandace G. Hinton", seat: "District 1" }
+  - { id: thompson, label: "Amanda Thompson", seat: "District 2" }
+  - { id: loudermilk, label: "Cheryl Loudermilk", seat: "District 3" }
+  - { id: nation, label: "Todd Nation", seat: "District 4" }
+  - { id: chalos, label: "James P. Chalos", seat: "District 5" }
+  - { id: dinkel, label: "Anthony J. Dinkel", seat: "District 6" }
+items:
+  - id: ray-park
+    label: "Ray Park / Riley Trail $20,000"
+    mover: loudermilk
+    seconder: hinton
+    result: "7 present, 2 absent · passed unanimously"
+cells:
+  - { member: loudermilk, item: ray-park, vote: yea }
+  - { member: hinton, item: ray-park, vote: yea }
+summary:
+  yea: 7
+  absent: 2
+  present: 7

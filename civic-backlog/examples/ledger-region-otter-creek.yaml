@@ -1,0 +1,26 @@
+type: region-map
+title: "Otter Creek Township fire district"
+caption: "The proposed fire tax district is the township, outside Terre Haute city limits."
+source:
+  label: "County commissioners, Aug 18"
+  href: "https://vigoledger.org/"
+legend:
+  - label: "Otter Creek Township"
+    color: "#C45C26"
+    icon: civic:fire
+  - label: "Terre Haute city"
+    color: "#D9D1C3"
+
+basemap:
+  city: Terre Haute
+  county: Vigo
+  state: IN
+
+region:
+  id: otter-creek
+  label: "Otter Creek Township"
+  geojson: geometries/otter-creek-township.geojson
+context:
+  - id: city
+    label: "Terre Haute city"
+    geojson: geometries/terre-haute-city.geojson

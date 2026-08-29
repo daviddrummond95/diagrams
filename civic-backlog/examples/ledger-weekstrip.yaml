@@ -1,0 +1,52 @@
+type: weekstrip
+title: "Vol. I No. 1 in time"
+from: "2026-03-05"
+to: "2026-08-25"
+colorBy: none
+caption: "Seventy-eight highlights, March 5 through August 25. Thirty-five land before August; forty-three pile up August 4–25."
+source:
+  label: "The Vigo Ledger, Vol. I No. 1"
+  href: "https://www.vigoledger.org/"
+alt: "78 highlights 2026-03-05 to 2026-08-25. 35 before August, 43 Aug 4–25. Peak days: Aug 4 (12), Jul 9 (10), Aug 12 (9), Aug 6 (8), Aug 13 (7)."
+legend:
+  items:
+    - { label: "Mark height = highlight count that day" }
+dataTable:
+  columns: [date, count]
+  records:
+    - ["2026-03-05", 6]
+    - ["2026-03-12", 2]
+    - ["2026-04-02", 3]
+    - ["2026-04-09", 5]
+    - ["2026-05-07", 2]
+    - ["2026-05-14", 2]
+    - ["2026-06-04", 3]
+    - ["2026-06-11", 2]
+    - ["2026-07-09", 10]
+    - ["2026-08-04", 12]
+    - ["2026-08-06", 8]
+    - ["2026-08-11", 1]
+    - ["2026-08-12", 9]
+    - ["2026-08-13", 7]
+    - ["2026-08-18", 4]
+    - ["2026-08-24", 1]
+    - ["2026-08-25", 1]
+
+marks:
+  - { date: "2026-03-05", count: 6,  label: "City Council (HB1001 among them)" }
+  - { date: "2026-03-12", count: 2 }
+  - { date: "2026-04-02", count: 3,  label: "N 12th held" }
+  - { date: "2026-04-09", count: 5,  label: "N 12th passed; TIF report" }
+  - { date: "2026-05-07", count: 2,  label: "Zoning rewrite announced" }
+  - { date: "2026-05-14", count: 2 }
+  - { date: "2026-06-04", count: 3 }
+  - { date: "2026-06-11", count: 2,  label: "Wheel tax held over" }
+  - { date: "2026-07-09", count: 10, label: "Wheel tax adopted; sewer plan; Holly briefing" }
+  - { date: "2026-08-04", count: 12, label: "Commissioners + County Sunshine" }
+  - { date: "2026-08-06", count: 8,  label: "City Council" }
+  - { date: "2026-08-11", count: 1,  label: "County Council (commissioners regular cancelled)" }
+  - { date: "2026-08-12", count: 9,  label: "Budget committee; inferred Wed 5pm" }
+  - { date: "2026-08-13", count: 7,  label: "Budget committee" }
+  - { date: "2026-08-18", count: 4,  label: "Commissioners" }
+  - { date: "2026-08-24", count: 1 }
+  - { date: "2026-08-25", count: 1,  label: "Commissioners" }

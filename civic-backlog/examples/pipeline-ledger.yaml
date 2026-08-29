@@ -1,0 +1,49 @@
+type: pipeline
+title: "How a Ledger note gets published"
+theme: default
+caption: "Nothing an agent writes is published automatically; a human accepts every note."
+source:
+  label: "The Vigo Ledger, About"
+  href: "https://vigoledger.org/"
+legend:
+  - { label: "Automated", pattern: solid }
+  - { label: "Human gate", pattern: hatch }
+alt: "Seven stages from find meetings to publish. Automated stages are filled; human review and publish have a heavy stroke. A dashed reject path runs from review back to draft."
+
+stages:
+  - id: find
+    label: "Find meetings"
+    gate: automated
+    description: "Find meetings on the calendar."
+  - id: fetch
+    label: "Fetch"
+    gate: automated
+    description: "Fetch video and agenda."
+  - id: transcribe
+    label: "Transcribe"
+    gate: automated
+    description: "Transcribe and separate speakers."
+  - id: draft
+    label: "Draft"
+    gate: automated
+    description: "Draft record, highlights, timelines."
+  - id: link-check
+    label: "Link-check"
+    gate: automated
+    description: "Check every sentence has a working source link."
+  - id: review
+    label: "Human review"
+    gate: human
+    description: "Claim matches source, timestamp lands, names correct."
+  - id: publish
+    label: "Publish"
+    gate: human
+    description: "Appears on the Ledger. Never automated."
+edges:
+  - { from: find, to: fetch }
+  - { from: fetch, to: transcribe }
+  - { from: transcribe, to: draft }
+  - { from: draft, to: link-check }
+  - { from: link-check, to: review }
+  - { from: review, to: publish }
+  - { from: review, to: draft }

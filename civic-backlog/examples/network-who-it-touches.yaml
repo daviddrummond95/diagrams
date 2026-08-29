@@ -1,0 +1,23 @@
+type: network
+title: "Who the Mason Lodge rezoning touches"
+theme: default
+caption: "The Mason Lodge proposal at 2215 Garfield sits next to Sacred Heart; the rezoning is a neighbor question, not just a map pin."
+source:
+  label: "The Vigo Ledger, Vol. I No. 1"
+  href: "https://vigoledger.org/"
+legend:
+  - { label: "Applicant", pattern: solid }
+  - { label: "Neighborhood", pattern: hatch }
+  - { label: "Place" }
+  - { label: "Body", pattern: stripes }
+alt: "Four nodes: Mason Lodge, Sacred Heart, 2215 Garfield at the center, and city council. Three edges connect applicant and neighbor to the place, and the applicant to council."
+
+nodes:
+  - { id: mason, label: "Mason Lodge", kind: developer }
+  - { id: sacred-heart, label: "Sacred Heart", kind: neighborhood }
+  - { id: garfield, label: "2215 Garfield", kind: place }
+  - { id: city-council, label: "Terre Haute City Council", kind: body }
+edges:
+  - { from: mason, to: garfield, rel: touches }
+  - { from: sacred-heart, to: garfield, rel: abuts }
+  - { from: mason, to: city-council, rel: touches }

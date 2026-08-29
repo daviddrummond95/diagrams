@@ -1,0 +1,20 @@
+type: slope
+title: "Cuts and jumps, this edition"
+unit: usd
+caption: "Clinton Road was cut $2.5 million; the clerk's scanning line jumped $100,000."
+source:
+  label: "County council, Aug 13"
+  href: "https://vigoledger.org/"
+
+columns:
+  from: "As budgeted"
+  to: "Adopted"
+items:
+  - id: clinton
+    label: "Clinton Road"
+    from: 3000000
+    to: 500000
+  - id: clerk
+    label: "Clerk scanning"
+    from: 9000
+    to: 109000

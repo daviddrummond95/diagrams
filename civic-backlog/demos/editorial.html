@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Editorial chrome · The Vigo Ledger</title>
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&family=Public+Sans:wght@400;500;600;700&display=swap");
+  :root {
+    --paper: #efe6d0;
+    --paper-2: #e7dcc3;
+    --ink: #161410;
+    --ink-2: #5c5346;
+    --rule: #c4b496;
+    --crimson: #9b2335;
+    --link: #6b1f2a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #d9cbb0; color: var(--ink); }
+  body {
+    font-family: "Newsreader", "Iowan Old Style", Palatino, Georgia, serif;
+    font-size: 18px;
+    line-height: 1.45;
+  }
+  .sheet {
+    max-width: 820px;
+    margin: 32px auto 64px;
+    background: var(--paper);
+    padding: 36px 48px 56px;
+    box-shadow: 0 1px 0 rgba(22,20,16,.12), 0 24px 48px rgba(22,20,16,.12);
+    border: 1px solid #cbbfa6;
+  }
+  .kicker {
+    font-family: "Public Sans", system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  masthead {
+    display: block;
+    border-top: 3px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    padding: 12px 0 16px;
+    margin: 0;
+    text-align: center;
+  }
+  masthead h1 {
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    margin: 4px 0 2px;
+    line-height: 1;
+  }
+  .dateline {
+    font-family: "Public Sans", system-ui, sans-serif;
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-bottom: 1px solid var(--ink);
+    margin: 0 0 32px;
+    padding-top: 4px;
+  }
+  .stat { padding: 12px 10px 14px; border-left: 1px solid var(--rule); }
+  .stat:first-child { border-left: 0; }
+  .stat .num {
+    font-weight: 700; font-size: 26px; letter-spacing: -.02em;
+    line-height: 1.1; display: block;
+  }
+  .stat .label {
+    font-family: "Public Sans", system-ui, sans-serif;
+    font-size: 11px; color: var(--ink-2); margin-top: 4px; display: block;
+  }
+  figure.chart { margin: 0 0 40px; padding: 0; }
+  figure.chart > svg { display: block; width: 100%; height: auto; }
+  .plot-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 108px;
+    gap: 20px;
+    align-items: stretch;
+  }
+  .plot-row svg { display: block; width: 100%; height: auto; }
+  .stat-card {
+    border-left: 2px solid var(--crimson);
+    padding: 0 0 52px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .stat-card .num {
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--crimson);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+  }
+  .stat-card .label {
+    font-family: "Public Sans", system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .stat-card .cmp {
+    font-family: "Public Sans", system-ui, sans-serif;
+    font-size: 12px;
+    color: var(--ink-2);
+    margin-top: 2px;
+  }
+  .node-sub {
+    font-family: "Public Sans", system-ui, sans-serif;
+    font-size: 10px;
+    fill: #f4eee0;
+  }
+  .title { font-size: 22px; font-weight: 700; margin: 0 0 4px; letter-spacing: -.01em; }
+  .caption { font-size: 16px; font-style: italic; margin: 0 0 12px; max-width: 42em; }
+  .source {
+    font-family: "Public Sans", system-ui, sans-serif;
+    font-size: 12px; color: var(--ink-2); margin: 8px 0 0;
+  }
+  .source a { color: var(--link); text-decoration: underline; text-underline-offset: 2px; }
+  .footnote {
+    font-family: "Public Sans", system-ui, sans-serif;
+    font-size: 11px; color: var(--ink-2); margin: 4px 0 0;
+  }
+  .legend {
+    display: flex; gap: 22px; flex-wrap: wrap;
+    font-family: "Public Sans", system-ui, sans-serif;
+    font-size: 12px; margin: 8px 0 10px; align-items: center;
+  }
+  .legend .item { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { width: 14px; height: 14px; border: 1px solid var(--ink); display: inline-block; }
+  .civic {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: "Public Sans", ui-monospace, monospace; font-size: 11px;
+  }
+  .civic svg, .legend svg { display: block; }
+  .icon-row {
+    display: flex; flex-wrap: wrap; gap: 16px 22px;
+    padding: 10px 0 12px; margin: 0 0 28px;
+    border-bottom: 1px solid var(--rule);
+    font-family: "Public Sans", ui-monospace, monospace;
+    font-size: 11px; color: var(--ink-2);
+  }
+  .icon-row .civic { color: var(--ink); }
+  .fallback {
+    margin-top: 10px; padding: 10px 12px;
+    background: var(--paper-2); border: 1px solid var(--rule);
+  }
+  .fallback h3 {
+    font-family: "Public Sans", system-ui, sans-serif;
+    font-size: 11px; font-weight: 600; letter-spacing: .12em;
+    text-transform: uppercase; margin: 0 0 6px; color: var(--ink-2);
+  }
+  .fallback p { margin: 0 0 8px; font-size: 15px; }
+  table.data {
+    width: 100%; border-collapse: collapse;
+    font-family: "Public Sans", system-ui, sans-serif; font-size: 13px;
+  }
+  table.data th, table.data td {
+    text-align: left; padding: 4px 8px 4px 0; border-bottom: 1px solid var(--rule);
+  }
+  table.data th { font-weight: 600; color: var(--ink-2); }
+  table.data td.n { font-variant-numeric: tabular-nums; }
+  .grid { stroke: var(--rule); stroke-width: .6; }
+  .tick {
+    fill: var(--ink-2); font-family: "Public Sans", system-ui, sans-serif;
+    font-size: 10px; text-anchor: end;
+  }
+  .bar-label {
+    font-family: "Public Sans", system-ui, sans-serif;
+    font-size: 11px; fill: var(--ink); text-anchor: middle;
+  }
+  .value-label {
+    font-family: "Newsreader", serif; font-size: 15px; font-weight: 700;
+    fill: var(--ink); text-anchor: middle;
+  }
+  .callout-text {
+    font-family: "Newsreader", serif; font-size: 14px; font-weight: 700; fill: #9b2335;
+  }
+  .callout-sub {
+    font-family: "Public Sans", system-ui, sans-serif; font-size: 10px; fill: var(--ink-2);
+  }
+  .node-label {
+    font-family: "Public Sans", system-ui, sans-serif;
+    font-size: 12px; font-weight: 600; fill: #f4eee0;
+  }
+  .node-value {
+    font-family: "Newsreader", serif; font-size: 16px; font-weight: 700; fill: #f4eee0;
+  }
+  .note {
+    font-family: "Public Sans", system-ui, sans-serif; font-size: 11px;
+    color: var(--ink-2); margin-top: 28px; padding-top: 10px; border-top: 1px solid var(--rule);
+  }
+  code { font-size: 11px; }
+</style>
+</head>
+<body>
+<article class="sheet">
+  <p class="kicker">Vol. I · No. 1 · diagrams.sh civic chrome · geometry from numbers, not a library renderer</p>
+  <masthead>
+    <div class="dateline">Terre Haute, Indiana · Friday, August 28, 2026</div>
+    <h1>The Vigo Ledger</h1>
+    <div class="dateline">A public record of city &amp; county government</div>
+  </masthead>
+
+  <div class="stats" role="group" aria-label="Edition band">
+    <div class="stat"><span class="num">6</span><span class="label">months indexed</span></div>
+    <div class="stat"><span class="num">78</span><span class="label">highlights in this edition</span></div>
+    <div class="stat"><span class="num" style="font-size:15px;padding-top:8px;display:block;">AI-assisted</span><span class="label">editor-checked</span></div>
+    <div class="stat"><span class="num" style="font-size:15px;padding-top:8px;display:block;">No corrections</span><span class="label">in this edition</span></div>
+  </div>
+
+  <p class="kicker">civic: starter set</p>
+  <div class="icon-row" aria-label="Civic icon slugs">
+    <span class="civic"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#161410" stroke-width="1.6" stroke-linejoin="round"><path d="M3 10 L12 4 L21 10"/><path d="M5 10 V19 H19 V10"/><path d="M8 19 V12 M12 19 V12 M16 19 V12"/><path d="M3 19 H21"/></g></svg> civic:courthouse</span>
+    <span class="civic"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#161410" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3 L14.4 8.8 L20.5 9.2 L16 13.4 L17.5 19.4 L12 16.2 L6.5 19.4 L8 13.4 L3.5 9.2 L9.6 8.8 Z"/></g></svg> civic:sheriff</span>
+    <span class="civic"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#161410" stroke-width="1.6" stroke-linecap="round"><path d="M8 21 L11 3 M16 21 L13 3"/><path d="M12 7 V9 M12 12 V14 M12 17 V19"/></g></svg> civic:roads</span>
+    <span class="civic"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#161410" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3 C12 3 7 9 7 13 a5 5 0 0 0 10 0 C17 10 14 7 12 3 Z"/><path d="M12 17 c-1.6 0-2.4-1.4-2.4-2.8 C9.6 12 12 10 12 10"/></g></svg> civic:fire</span>
+    <span class="civic"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#161410" stroke-width="1.6" stroke-linejoin="round"><path d="M4 11 L12 6 L20 11 V19 H4 Z"/><path d="M12 6 V3 H15"/><path d="M10 19 V14 H14 V19"/></g></svg> civic:school</span>
+    <span class="civic"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#161410" stroke-width="1.6" stroke-linejoin="round"><path d="M3 12 L12 4 L21 12"/><path d="M6 11 V20 H18 V11"/><path d="M10 20 V15 H14 V20"/></g></svg> civic:housing</span>
+  </div>
+
+  <figure class="chart" aria-describedby="delta-alt">
+    <h2 class="title">Clinton Road widening</h2>
+    <p class="caption">EDIT-fund funding dropped from $3 million to $500,000.</p>
+    <div class="plot-row">
+    <svg viewBox="0 0 640 380" role="img" aria-labelledby="delta-title delta-alt">
+      <title id="delta-title">Clinton Road widening</title>
+      <line x1="66" y1="324.0" x2="604" y2="324.0" class="grid"/>
+      <text x="62" y="324.0" class="tick" dy="0.35em">$0</text>
+      <line x1="66" y1="225.3" x2="604" y2="225.3" class="grid"/>
+      <text x="62" y="225.3" class="tick" dy="0.35em">$1M</text>
+      <line x1="66" y1="126.7" x2="604" y2="126.7" class="grid"/>
+      <text x="62" y="126.7" class="tick" dy="0.35em">$2M</text>
+      <line x1="66" y1="28.0" x2="604" y2="28.0" class="grid"/>
+      <text x="62" y="28.0" class="tick" dy="0.35em">$3M</text>
+      <line x1="72" y1="324" x2="604" y2="324" stroke="#161410" stroke-width="1.2"/>
+      <path d="M 200.0 28.0 L 488.0 274.7 L 580.0 274.7 L 580.0 28.0 Z" fill="#9b2335" fill-opacity="0.12"/>
+      <line x1="200.0" y1="28.0" x2="488.0" y2="274.7" stroke="#9b2335" stroke-width="1.75"/>
+      <rect x="108" y="28.0" width="92" height="296.0" fill="#161410"/>
+      <rect x="488" y="274.7" width="92" height="49.3" fill="#9b2335"/>
+      <text class="value-label" x="154.0" y="20.0">$3M</text>
+      <text class="value-label" x="534.0" y="266.6666666666667" fill="#9b2335">$500k</text>
+      <text class="bar-label" x="154.0" y="340">As previously budgeted</text>
+      <text class="bar-label" x="534.0" y="340">Adopted</text>
+      <circle cx="344.0" cy="151.3" r="3.5" fill="#9b2335"/>
+      <line x1="344.0" y1="151.3" x2="308" y2="196" stroke="#9b2335" stroke-width="1"/>
+      <rect x="230" y="196" width="156" height="38" fill="#efe6d0"/>
+      <a href="https://vigoledger.org/">
+        <text class="callout-text" x="238" y="212" text-decoration="underline">$3M → $500k</text>
+      </a>
+      <text class="callout-sub" x="238" y="228">EDIT fund, voice vote · 31:21</text>
+    </svg>
+    <aside class="stat-card">
+      <div class="num">$500k</div>
+      <div class="label">Adopted</div>
+      <div class="cmp">from $3M</div>
+    </aside>
+    </div>
+    <p class="source">Source: <a href="https://vigoledger.org/">County council, Aug 13</a></p>
+    <p class="footnote">Figures from the adopted EDIT-fund budget, not the original agenda packet.</p>
+    <div class="fallback" id="delta-alt">
+      <h3>Text equivalent · alt + dataTable</h3>
+      <p>Clinton Road widening funds dropped from $3 million as previously budgeted to $500,000 adopted in the EDIT fund at the August 13 county council meeting.</p>
+      <table class="data">
+        <thead><tr><th>Stage</th><th>Amount</th></tr></thead>
+        <tbody>
+          <tr><td>As previously budgeted</td><td class="n">$3M (3000000)</td></tr>
+          <tr><td>Adopted</td><td class="n">$500k (500000)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </figure>
+
+  <figure class="chart" aria-describedby="sankey-alt">
+    <h2 class="title">Housing loan fund</h2>
+    <p class="caption">City and county each put $1 million into a revolving housing loan fund.</p>
+    <div class="legend" aria-label="legend">
+      <span class="item"><span class="swatch" style="background:#2f4a3c"></span> City <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#161410" stroke-width="1.6" stroke-linejoin="round"><path d="M3 12 L12 4 L21 12"/><path d="M6 11 V20 H18 V11"/><path d="M10 20 V15 H14 V20"/></g></svg> <code>civic:housing</code></span>
+      <span class="item"><span class="swatch" style="background:#3e4f6d"></span> County <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#161410" stroke-width="1.6" stroke-linejoin="round"><path d="M3 10 L12 4 L21 10"/><path d="M5 10 V19 H19 V10"/><path d="M8 19 V12 M12 19 V12 M16 19 V12"/><path d="M3 19 H21"/></g></svg> <code>civic:courthouse</code></span>
+      <span class="item"><span class="swatch" style="background:#6a4e36"></span> Loan fund <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#161410" stroke-width="1.6" stroke-linejoin="round"><path d="M3 12 L12 4 L21 12"/><path d="M6 11 V20 H18 V11"/><path d="M10 20 V15 H14 V20"/></g></svg> <code>civic:housing</code></span>
+    </div>
+    <svg viewBox="0 0 720 340" role="img" aria-labelledby="sankey-title sankey-alt">
+      <title id="sankey-title">Housing loan fund</title>
+      <path d="M 148.0 24.0 C 338.8 24.0, 381.2 24.0, 572.0 24.0 L 572.0 160.0 C 381.2 160.0, 338.8 159.0, 148.0 159.0 Z" fill="#2f4a3c" fill-opacity="0.45"/>
+      <path d="M 148.0 169.0 C 338.8 169.0, 381.2 168.0, 572.0 168.0 L 572.0 304.0 C 381.2 304.0, 338.8 304.0, 148.0 304.0 Z" fill="#3e4f6d" fill-opacity="0.45"/>
+      <rect x="16" y="24.0" width="132" height="135.0" fill="#2f4a3c"/>
+      <rect x="16" y="169.0" width="132" height="135.0" fill="#3e4f6d"/>
+      <rect x="572" y="24.0" width="132" height="280.0" fill="#6a4e36"/>
+      <g transform="translate(26, 38)"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#f4eee0" stroke-width="1.6" stroke-linejoin="round"><path d="M3 12 L12 4 L21 12"/><path d="M6 11 V20 H18 V11"/><path d="M10 20 V15 H14 V20"/></g></svg></g>
+      <text class="node-label" x="48" y="50">City</text>
+      <text class="node-value" x="26" y="76">$1M</text>
+      <g transform="translate(26, 183.0)"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#f4eee0" stroke-width="1.6" stroke-linejoin="round"><path d="M3 10 L12 4 L21 10"/><path d="M5 10 V19 H19 V10"/><path d="M8 19 V12 M12 19 V12 M16 19 V12"/><path d="M3 19 H21"/></g></svg></g>
+      <text class="node-label" x="48" y="195.0">County</text>
+      <text class="node-value" x="26" y="221.0">$1M</text>
+      <g transform="translate(582, 42)"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#f4eee0" stroke-width="1.6" stroke-linejoin="round"><path d="M3 12 L12 4 L21 12"/><path d="M6 11 V20 H18 V11"/><path d="M10 20 V15 H14 V20"/></g></svg></g>
+      <text class="node-label" x="604" y="54">Loan fund</text>
+      <text class="node-value" x="582" y="80">$2M</text>
+      <text class="node-sub" x="582" y="98">city + county</text>
+    </svg>
+    <p class="source">Source: <a href="https://vigoledger.org/">City &amp; county, Mar 5</a> · <a href="https://vigoledger.org/">$1 million each from city and county, 23:52</a></p>
+    <div class="fallback" id="sankey-alt">
+      <h3>Text equivalent · alt + dataTable</h3>
+      <p>A $2 million revolving housing loan fund is split evenly: $1 million from the city and $1 million from the county.</p>
+      <table class="data">
+        <thead><tr><th>From</th><th>To</th><th>Amount</th></tr></thead>
+        <tbody>
+          <tr><td>City</td><td>Loan fund</td><td class="n">$1M (1000000)</td></tr>
+          <tr><td>County</td><td>Loan fund</td><td class="n">$1M (1000000)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </figure>
+
+  <p class="note">
+    Chart geometry is computed from the numbers
+    (Clinton Road 3000000→500000; housing 1000000+1000000=2000000).
+    Bar heights, the slope of the cut, and sankey ribbon widths are proportional to those values.
+    This file is not a diagrams.sh renderer and is not in the GitHub repo.
+    Chrome on the page: caption, source as real &lt;a href&gt;, legend, stat, annotation (kind: callout), civic: slugs, alt + dataTable.
+  </p>
+</article>
+</body>
+</html>

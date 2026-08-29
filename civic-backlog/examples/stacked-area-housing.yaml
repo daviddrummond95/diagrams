@@ -1,0 +1,17 @@
+type: stacked-area
+title: "Housing fund by payer"
+unit: usd
+caption: "City and county each put up $1 million. A second year turns this into a mix-over-time chart."
+source:
+  label: "City / county, this edition"
+  href: "https://vigoledger.org/"
+
+periods:
+  - "This year"
+series:
+  - id: city
+    label: "City"
+    values: [1000000]
+  - id: county
+    label: "County"
+    values: [1000000]

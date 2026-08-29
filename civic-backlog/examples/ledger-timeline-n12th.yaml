@@ -1,0 +1,31 @@
+type: timeline
+title: "3317 North 12th Street rezoning"
+direction: LR
+from: "2026-04-01"
+to: "2026-04-15"
+caption: "Council held the rezoning April 2 because APC hadn't met. A week later both lots passed R1 to C2 on a voice vote — not 8-0."
+source:
+  - label: "City Council, Apr 2"
+    href: "https://www.vigoledger.org/h/2026-04-02-terre-haute-city-council-north-12th-street-rezoning-held"
+  - label: "City Council, Apr 9 (corrected Aug 28)"
+    href: "https://www.vigoledger.org/h/2026-04-09-terre-haute-city-council-north-12th-street-rezoning"
+alt: "2026-04-02: held, APC had not met. 2026-04-09: 3317 N 12th and 1205 Fort Harrison rezoned R1 to C2, voice vote. Highlight corrected 2026-08-28; 8-0 was synthesized."
+dataTable:
+  columns: [date, label]
+  records:
+    - ["2026-04-02", "Held — APC hadn't met"]
+    - ["2026-04-09", "Passed voice vote, R1→C2"]
+
+events:
+  - id: held
+    date: "2026-04-02"
+    label: "Held — APC hadn't met"
+    body: "City Council"
+    href: "https://www.vigoledger.org/h/2026-04-02-terre-haute-city-council-north-12th-street-rezoning-held"
+    description: "Special Ordinance 3, 2026. No vote. Petitioner's attorney absent."
+  - id: passed
+    date: "2026-04-09"
+    label: "Passed voice vote, R1→C2"
+    body: "City Council"
+    href: "https://www.vigoledger.org/h/2026-04-09-terre-haute-city-council-north-12th-street-rezoning"
+    description: "3317 N 12th and 1205 Fort Harrison. Not 8-0; corrected 2026-08-28."

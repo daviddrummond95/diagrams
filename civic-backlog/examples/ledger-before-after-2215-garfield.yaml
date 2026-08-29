@@ -1,0 +1,52 @@
+type: before-after-map
+title: "2215 Garfield: residential to commercial"
+caption: "Left is the lot as zoned. Right is the commercial district council approved for the former Mason Lodge."
+source:
+  label: "City council, Aug 6"
+  href: "https://vigoledger.org/"
+legend:
+  title: "Zoning"
+  items:
+    - label: "R-1 Residential"
+      color: "#E6D9B8"
+    - label: "C-2 Commercial"
+      color: "#C45C26"
+
+basemap:
+  city: Terre Haute
+  county: Vigo
+  state: IN
+  center: { lon: -87.39914, lat: 39.49361 }
+  zoom: 16
+
+layout: split
+
+extent:
+  - { lon: -87.4000, lat: 39.4929 }
+  - { lon: -87.3983, lat: 39.4929 }
+  - { lon: -87.3983, lat: 39.4943 }
+  - { lon: -87.4000, lat: 39.4943 }
+
+before:
+  label: "Current"
+  parcels:
+    - id: mason-lodge
+      label: "2215 Garfield"
+      code: R-1
+      ring:
+        - { lon: -87.39932, lat: 39.49345 }
+        - { lon: -87.39896, lat: 39.49345 }
+        - { lon: -87.39896, lat: 39.49377 }
+        - { lon: -87.39932, lat: 39.49377 }
+
+after:
+  label: "Proposed"
+  parcels:
+    - id: mason-lodge
+      label: "2215 Garfield"
+      code: C-2
+      ring:
+        - { lon: -87.39932, lat: 39.49345 }
+        - { lon: -87.39896, lat: 39.49345 }
+        - { lon: -87.39896, lat: 39.49377 }
+        - { lon: -87.39932, lat: 39.49377 }

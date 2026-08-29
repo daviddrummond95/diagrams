@@ -1,6 +1,16 @@
 import YAML from 'yaml';
 import type { AnyDiagramSpec, DiagramSpec, GanttSpec, TimelineSpec, QuadrantSpec } from './types.js';
 
+const CIVIC_TYPES = new Set([
+  'stat', 'sankey', 'waterfall', 'delta', 'bar', 'grouped-bar', 'stacked-bar',
+  'treemap', 'bullet', 'slope', 'alluvial', 'range-plot', 'line', 'stacked-area',
+  'histogram', 'dot-plot', 'locator-map', 'region-map', 'choropleth', 'corridor',
+  'symbol-map', 'zoning-map', 'before-after-map', 'agenda-states', 'outcome-funnel',
+  'org', 'vote-matrix', 'impact', 'pipeline', 'hemicycle', 'heatmap-table', 'network',
+  'donut', 'weekstrip', 'entity-timeline', 'calendar-heatmap', 'sparkline', 'waffle',
+  'isotype', 'small-multiples', 'scorecard', 'beeswarm', 'connected-dot', 'data-table',
+]);
+
 export function parseSpec(input: string): AnyDiagramSpec {
   // Try JSON first, fall back to YAML
   const trimmed = input.trim();
@@ -21,7 +31,14 @@ export function parseSpec(input: string): AnyDiagramSpec {
   }
 
   const obj = raw as Record<string, unknown>;
-  const type = (obj.type as string) ?? 'flow';
+  let type = (obj.type as string) ?? 'flow';
+  if (type === 'category-mix') {
+    type = 'stacked-bar';
+    obj.type = type;
+  } else if (type === 'per-body-count') {
+    type = 'bar';
+    obj.type = type;
+  }
 
   switch (type) {
     case 'gantt':
@@ -31,8 +48,10 @@ export function parseSpec(input: string): AnyDiagramSpec {
     case 'quadrant':
       return normalizeQuadrant(obj as unknown as QuadrantSpec);
     case 'flow':
-    default:
       return normalizeFlow(obj as unknown as DiagramSpec);
+    default:
+      if (CIVIC_TYPES.has(type)) return obj as unknown as AnyDiagramSpec;
+      throw new Error(`Unknown diagram type: "${type}"`);
   }
 }
 

@@ -1,0 +1,35 @@
+type: delta
+title: "Clinton Road widening"
+unit: usd
+caption: "EDIT-fund funding dropped from $3 million to $500,000."
+source:
+  label: "County council, Aug 13"
+  href: "https://vigoledger.org/"
+
+from:
+  label: "As previously budgeted"
+  value: 3000000
+to:
+  label: "Adopted"
+  value: 500000
+stat:
+  value: 500000
+  unit: usd
+  label: Adopted
+  comparator:
+    value: 3000000
+    label: from the proposed $3M
+    direction: down
+annotations:
+  - kind: callout
+    text: "$3M → $500k"
+    at: { x: adopted }
+    tone: down
+legend: false
+alt: "Clinton Road widening in the EDIT budget dropped from $3 million to $500,000."
+dataTable:
+  columns: [Stage, Amount]
+  records:
+    - [As previously budgeted, 3000000]
+    - [Adopted, 500000]
+footnote: "Figures from the adopted EDIT line, not the original agenda packet."

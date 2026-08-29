@@ -1,0 +1,24 @@
+type: region-map
+title: "13th Street corridor"
+caption: "The advocacy district runs roughly Wabash to Maple, 13th to 25th."
+source:
+  label: "City council, Mar 5"
+  href: "https://vigoledger.org/"
+legend:
+  items:
+    - label: "13th Street corridor"
+      color: "#C45C26"
+
+basemap:
+  city: Terre Haute
+  county: Vigo
+  state: IN
+
+region:
+  id: thirteenth
+  label: "13th Street corridor"
+  ring:
+    - { lon: -87.39772, lat: 39.46649 }
+    - { lon: -87.37895, lat: 39.46965 }
+    - { lon: -87.37910, lat: 39.49216 }
+    - { lon: -87.39783, lat: 39.49209 }

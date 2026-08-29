@@ -1,0 +1,33 @@
+type: corridor
+title: "Clinton Road widening"
+caption: "EDIT-fund funding for the widening dropped from $3 million to $500,000. The project is Park Avenue to Hasselburger."
+source:
+  label: "County council, Aug 13"
+  href: "https://vigoledger.org/"
+legend:
+  items:
+    - label: "Clinton Road (Park–Hasselburger)"
+      color: "#C45C26"
+
+basemap:
+  city: Terre Haute
+  county: Vigo
+  state: IN
+
+corridor:
+  id: clinton-road
+  label: "Clinton Road"
+  path:
+    - { lon: -87.36990, lat: 39.52797 }
+    - { lon: -87.36990, lat: 39.54242 }
+  widthMeters: 40
+
+stops:
+  - id: park
+    label: "Park Ave"
+    lon: -87.36990
+    lat: 39.52797
+  - id: hasselburger
+    label: "Hasselburger Ave"
+    lon: -87.36990
+    lat: 39.54242

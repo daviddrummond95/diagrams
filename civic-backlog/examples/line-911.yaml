@@ -1,0 +1,18 @@
+type: line
+title: "911 fund, next year vs this year"
+unit: usd
+caption: "The county's 911 fund is set to spend more than it takes in next year."
+source:
+  label: "County council, Aug 13"
+  href: "https://vigoledger.org/"
+
+periods:
+  - "This year"
+  - "Next year"
+series:
+  - id: receipts
+    label: "Receipts"
+    values: [0, 0]
+  - id: outlays
+    label: "Outlays"
+    values: [0, 0]

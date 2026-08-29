@@ -1,0 +1,36 @@
+type: hemicycle
+title: "Ray Park appropriation, Apr 2"
+theme: default
+caption: "Seven present, two absent: the Ray Park appropriation passed among those in the room. Loudermilk moved; Hinton seconded."
+source:
+  label: "City council, Apr 2"
+  href: "https://vigoledger.org/"
+legend:
+  - { label: "Yea", pattern: solid }
+  - { label: "Nay", pattern: hatch }
+  - { label: "Absent" }
+stat:
+  display: "7 present, 2 absent"
+alt: "Nine seats in a hemicycle. Seven filled yea, two empty-stroke absent. Only Loudermilk (mover) and Hinton (seconder) are labeled."
+
+item:
+  id: ray-park
+  label: "Ray Park / Riley Trail $20,000"
+  body: "Terre Haute City Council"
+  date: "2026-04-02"
+mover: loudermilk
+seconder: hinton
+seats:
+  - { id: loudermilk, label: "Cheryl Loudermilk", member: loudermilk, vote: yea, seat: "District 3" }
+  - { id: hinton, label: "Kandace G. Hinton", member: hinton, vote: yea, seat: "District 1" }
+  - { id: yea-3, vote: yea }
+  - { id: yea-4, vote: yea }
+  - { id: yea-5, vote: yea }
+  - { id: yea-6, vote: yea }
+  - { id: yea-7, vote: yea }
+  - { id: absent-1, vote: absent }
+  - { id: absent-2, vote: absent }
+summary:
+  yea: 7
+  absent: 2
+  present: 7

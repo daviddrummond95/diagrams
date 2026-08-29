@@ -1,0 +1,122 @@
+{
+  "prefix": "civic",
+  "count": 96,
+  "categories": {
+    "bodies": [
+      "courthouse",
+      "city-hall",
+      "council",
+      "commissioners",
+      "mayor",
+      "clerk",
+      "auditor",
+      "treasurer",
+      "assessor",
+      "recorder",
+      "committee"
+    ],
+    "safety": [
+      "sheriff",
+      "police",
+      "fire",
+      "ems",
+      "911",
+      "dispatch",
+      "jail",
+      "court",
+      "judge",
+      "prosecutor",
+      "defender",
+      "probation",
+      "corrections",
+      "camera",
+      "body-camera",
+      "vehicle"
+    ],
+    "works": [
+      "roads",
+      "highway",
+      "bridge",
+      "plow",
+      "traffic",
+      "garage",
+      "construction",
+      "tower",
+      "sewer",
+      "stormwater",
+      "water",
+      "utilities",
+      "trash"
+    ],
+    "transit": [
+      "transit",
+      "bus",
+      "bike",
+      "parking",
+      "rail",
+      "airport"
+    ],
+    "land": [
+      "housing",
+      "shelter",
+      "bed",
+      "lot",
+      "parcel",
+      "zoning",
+      "demolition",
+      "building",
+      "duplex",
+      "historic",
+      "ada"
+    ],
+    "parks": [
+      "park",
+      "trail",
+      "pool",
+      "fairgrounds",
+      "library",
+      "museum",
+      "school",
+      "university"
+    ],
+    "people": [
+      "health",
+      "hospital",
+      "clinic",
+      "child",
+      "senior",
+      "disability",
+      "food",
+      "animal"
+    ],
+    "money": [
+      "tax",
+      "budget",
+      "bond",
+      "grant",
+      "tif",
+      "levy",
+      "fee",
+      "fund",
+      "abatement"
+    ],
+    "process": [
+      "gavel",
+      "agenda",
+      "ordinance",
+      "hearing",
+      "vote",
+      "ballot",
+      "election",
+      "deferral",
+      "records"
+    ],
+    "place-env": [
+      "flood",
+      "tree",
+      "river",
+      "conservancy",
+      "fireworks"
+    ]
+  }
+}

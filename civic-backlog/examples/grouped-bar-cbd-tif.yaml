@@ -1,0 +1,17 @@
+type: grouped-bar
+title: "CBD TIF: collected vs spent"
+unit: usd
+caption: "The CBD TIF spent $46,494 more than it collected."
+source:
+  label: "Redevelopment, this edition"
+  href: "https://vigoledger.org/"
+
+categories:
+  - "CBD TIF"
+series:
+  - id: collected
+    label: "Collected"
+    values: [0]
+  - id: spent
+    label: "Spent"
+    values: [0]

@@ -1,9 +1,11 @@
-import type { AnyDiagramSpec, DiagramSpec, GanttSpec, TimelineSpec, QuadrantSpec, RenderOptions, ThemeConfig } from '../types.js';
+import type { AnyDiagramSpec, CivicBase, DiagramSpec, GanttSpec, TimelineSpec, QuadrantSpec, RenderOptions, ThemeConfig } from '../types.js';
 import { layoutWithGroups } from '../layout/groups.js';
 import { getTheme } from '../themes/index.js';
 import { resolveIcon } from '../icons.js';
+import { cloneDiagramSpec } from '../spec.js';
 import { buildTree } from './tree.js';
-import { renderToSvg, renderToPng } from './rasterize.js';
+import { renderToSvg } from './svg.js';
+import { renderToPng } from './rasterize.js';
 import { renderToHTML } from './html.js';
 import { renderToPptx } from './pptx.js';
 
@@ -17,17 +19,33 @@ import { renderTimelineToPptx } from '../diagrams/timeline/pptx.js';
 import { layoutGantt } from '../diagrams/gantt/layout.js';
 import { buildGanttTree } from '../diagrams/gantt/tree.js';
 import { renderGanttToPptx } from '../diagrams/gantt/pptx.js';
+import { buildCivicDiagram, CIVIC_RENDER_TYPES } from '../diagrams/civic/index.js';
+import { PLACE_TYPES } from '../diagrams/civic/place.js';
+import { hydrateGeoJSON } from '../diagrams/civic/geojson.js';
+import { renderCivicToPptx } from '../diagrams/civic/pptx.js';
+
+export { buildDiagramTree } from './build.js';
+export type { DiagramTreeResult } from './build.js';
 
 export async function renderDiagram(
   spec: AnyDiagramSpec,
   options: RenderOptions = {},
 ): Promise<string | Buffer> {
+  spec = cloneDiagramSpec(spec);
+  if (!spec.type || spec.type === 'flow') {
+    const flowSpec = spec as DiagramSpec;
+    flowSpec.direction = flowSpec.direction ?? 'TB';
+  }
   const format = options.format ?? 'png';
   const padding = options.padding ?? 40;
   const scale = options.scale ?? 2;
   const type = spec.type ?? 'flow';
 
   const theme: ThemeConfig = getTheme(spec.theme);
+
+  if (CIVIC_RENDER_TYPES.has(type)) {
+    return renderCivic(spec, theme, format, scale, options);
+  }
 
   switch (type) {
     case 'quadrant':
@@ -42,6 +60,23 @@ export async function renderDiagram(
   }
 }
 
+async function renderCivic(
+  spec: AnyDiagramSpec,
+  theme: ThemeConfig,
+  format: string,
+  scale: number,
+  options: RenderOptions,
+): Promise<string | Buffer> {
+  if ((PLACE_TYPES as readonly string[]).includes(spec.type ?? '')) {
+    await hydrateGeoJSON(spec as unknown as Record<string, any>, options.baseDir ?? process.cwd());
+  }
+  const result = buildCivicDiagram(spec, theme, options);
+  if (format === 'pptx') {
+    return renderCivicToPptx(result.tree, result.width, result.height, theme, spec as CivicBase);
+  }
+  return rasterize(result.tree, result.width, result.height, format, scale, options, spec as CivicBase);
+}
+
 async function renderFlow(
   spec: DiagramSpec,
   theme: ThemeConfig,
@@ -52,7 +87,7 @@ async function renderFlow(
 ): Promise<string | Buffer> {
   // Resolve icons to data URIs
   await Promise.all(spec.nodes.map(async node => {
-    if (node.icon) node.iconDataUri = await resolveIcon(node.icon);
+    if (node.icon) node.iconDataUri = await resolveIcon(node.icon, { allowRemote: options.allowRemoteIcons !== false });
   }));
 
   const result = layoutWithGroups(spec, theme, padding);
@@ -98,7 +133,7 @@ async function renderTimeline(
   await Promise.all(spec.events.map(async event => {
     if (event.icon) {
       try {
-        event.iconDataUri = await resolveIcon(event.icon);
+        event.iconDataUri = await resolveIcon(event.icon, { allowRemote: options.allowRemoteIcons !== false });
       } catch {
         // icon resolution is best-effort for timelines
       }
@@ -135,62 +170,6 @@ async function renderGantt(
   return rasterize(tree, width, layout.height, format, scale, options);
 }
 
-export interface DiagramTreeResult {
-  tree: import('../types.js').SatoriElement;
-  width: number;
-  height: number;
-}
-
-/**
- * Build the Satori element tree without rasterizing — for use in React components.
- * Returns { tree, width, height } ready for satoriToReact() conversion.
- */
-export async function buildDiagramTree(
-  spec: AnyDiagramSpec,
-  options: RenderOptions = {},
-): Promise<DiagramTreeResult> {
-  const padding = options.padding ?? 40;
-  const type = spec.type ?? 'flow';
-  const theme: ThemeConfig = getTheme(spec.theme);
-
-  // Default transparent background for component embedding
-  const opts = { ...options, background: options.background ?? 'transparent' };
-
-  switch (type) {
-    case 'quadrant': {
-      const layout = layoutQuadrant(spec as QuadrantSpec, theme, padding);
-      const tree = buildQuadrantTree(spec as QuadrantSpec, layout, theme, opts);
-      return { tree, width: opts.width ?? layout.width, height: layout.height };
-    }
-    case 'timeline': {
-      const tSpec = spec as TimelineSpec;
-      await Promise.all(tSpec.events.map(async event => {
-        if (event.icon) {
-          try { event.iconDataUri = await resolveIcon(event.icon); } catch {}
-        }
-      }));
-      const layout = layoutTimeline(tSpec, theme, padding);
-      const tree = buildTimelineTree(tSpec, layout, theme, opts);
-      return { tree, width: opts.width ?? layout.width, height: layout.height };
-    }
-    case 'gantt': {
-      const layout = layoutGantt(spec as GanttSpec, theme, padding);
-      const tree = buildGanttTree(spec as GanttSpec, layout, theme, opts);
-      return { tree, width: opts.width ?? layout.width, height: layout.height };
-    }
-    case 'flow':
-    default: {
-      const flowSpec = spec as DiagramSpec;
-      await Promise.all(flowSpec.nodes.map(async node => {
-        if (node.icon) node.iconDataUri = await resolveIcon(node.icon);
-      }));
-      const result = layoutWithGroups(flowSpec, theme, padding);
-      const tree = buildTree(flowSpec, result, theme, opts);
-      return { tree, width: opts.width ?? result.width, height: result.height };
-    }
-  }
-}
-
 async function rasterize(
   tree: import('../types.js').SatoriElement,
   width: number,
@@ -198,14 +177,15 @@ async function rasterize(
   format: string,
   scale: number,
   options: RenderOptions = {},
+  metadata?: CivicBase,
 ): Promise<string | Buffer> {
   switch (format) {
     case 'html':
-      return renderToHTML(tree, options);
+      return renderToHTML(tree, options, metadata);
     case 'svg':
-      return renderToSvg(tree, width, height);
+      return renderToSvg(tree, width, height, metadata ? { title: metadata.title, alt: metadata.alt } : undefined);
     case 'png':
-      return renderToPng(tree, width, height, scale);
+      return renderToPng(tree, width, height, scale, metadata ? { title: metadata.title, alt: metadata.alt } : undefined);
     default:
       throw new Error(`Unknown format: "${format}"`);
   }

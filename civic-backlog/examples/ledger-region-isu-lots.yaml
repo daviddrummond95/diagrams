@@ -1,0 +1,24 @@
+type: region-map
+title: "Former ISU lots"
+caption: "Seventy-four lots between 3rd and 13th, up to Locust, north of campus."
+source:
+  label: "Redevelopment, Mar 5"
+  href: "https://vigoledger.org/"
+legend:
+  items:
+    - label: "74 former ISU lots"
+      color: "#C45C26"
+
+basemap:
+  city: Terre Haute
+  county: Vigo
+  state: IN
+
+region:
+  id: isu-lots
+  label: "Former ISU lots"
+  ring:
+    - { lon: -87.41412, lat: 39.47092 }
+    - { lon: -87.39779, lat: 39.47092 }
+    - { lon: -87.39779, lat: 39.47754 }
+    - { lon: -87.41412, lat: 39.47754 }

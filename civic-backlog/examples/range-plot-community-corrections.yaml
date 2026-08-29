@@ -1,0 +1,14 @@
+type: range-plot
+title: "Local share of community corrections"
+unit: usd
+caption: "State cuts push about $700,000 in community-corrections costs onto the county general fund."
+source:
+  label: "County council, this edition"
+  href: "https://vigoledger.org/"
+
+items:
+  - id: cc
+    label: "Community corrections (local)"
+    min: 0
+    max: 700000
+    mid: 700000

@@ -1,0 +1,30 @@
+type: treemap
+title: "This week's appropriations"
+unit: usd
+caption: "Six adds, sized by dollars. Building emergencies and the Clinton Road study dominate."
+source:
+  label: "County council, Aug 12–13"
+  href: "https://vigoledger.org/"
+
+nodes:
+  - id: week
+    label: "This week's adds"
+    children:
+      - id: buildings
+        label: "Building emergencies"
+        value: 520000
+      - id: traffic
+        label: "Traffic study"
+        value: 469000
+      - id: rescue
+        label: "Rescue truck"
+        value: 225000
+      - id: plow
+        label: "Plow"
+        value: 100000
+      - id: warming
+        label: "Warming center"
+        value: 47500
+      - id: susie
+        label: "Susie's Place"
+        value: 45000

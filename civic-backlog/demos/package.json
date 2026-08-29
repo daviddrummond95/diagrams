@@ -1,0 +1,8 @@
+{
+"name":"diagrams-time-demo",
+"private":true,
+"type":"module",
+"dependencies":{
+"yaml":"^2.8.1"
+}
+}

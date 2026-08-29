@@ -1,26 +1,25 @@
 import { resolve, dirname } from 'path';
 import { readFile } from 'fs/promises';
 import { fileURLToPath } from 'url';
-import * as simpleIcons from 'simple-icons';
 import { cloudIconIndex } from './cloud-icons-index.js';
 import { geistIconIndex } from './geist-icons-index.js';
 
-type IconType = 'emoji' | 'favicon' | 'cloud' | 'geist' | 'named' | 'none';
+export type IconType = 'emoji' | 'favicon' | 'cloud' | 'geist' | 'civic' | 'named' | 'none';
+
+export interface ResolveIconOptions {
+  /** Emoji and favicon resolution perform outbound network requests. */
+  allowRemote?: boolean;
+}
 
 type SimpleIcon = { title: string; slug: string; svg: string; hex: string };
 
-// Build a slug → icon lookup once for simple-icons
-const slugMap = new Map<string, SimpleIcon>();
-for (const [key, value] of Object.entries(simpleIcons)) {
-  if (key.startsWith('si') && typeof value === 'object' && value !== null && 'slug' in value) {
-    slugMap.set((value as SimpleIcon).slug, value as SimpleIcon);
-  }
-}
+let slugMapPromise: Promise<Map<string, SimpleIcon>> | undefined;
 
 // Resolve icon directories relative to this file
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const iconsRoot = resolve(__dirname, '..', 'downloaded_icons');
 const geistIconsRoot = resolve(__dirname, '..', 'icons');
+const civicIconsRoot = resolve(__dirname, '..', 'icons', 'civic');
 
 const emojiRegex = /\p{Emoji_Presentation}|\p{Emoji}\uFE0F/u;
 
@@ -28,6 +27,7 @@ export function detectIconType(icon: string | undefined): IconType {
   if (!icon) return 'none';
   if (icon.startsWith('aws:') || icon.startsWith('gcp:')) return 'cloud';
   if (icon.startsWith('geist:')) return 'geist';
+  if (icon.startsWith('civic:')) return 'civic';
   if (icon.startsWith('favicon:')) return 'favicon';
   if (emojiRegex.test(icon)) return 'emoji';
   return 'named';
@@ -60,7 +60,23 @@ async function resolveFavicon(domain: string): Promise<string> {
   return `data:image/png;base64,${toBase64(buf)}`;
 }
 
-function resolveSimpleIcon(slug: string): string {
+async function simpleIconMap(): Promise<Map<string, SimpleIcon>> {
+  if (!slugMapPromise) {
+    slugMapPromise = import('simple-icons').then(simpleIcons => {
+      const map = new Map<string, SimpleIcon>();
+      for (const [key, value] of Object.entries(simpleIcons)) {
+        if (key.startsWith('si') && typeof value === 'object' && value !== null && 'slug' in value) {
+          map.set((value as SimpleIcon).slug, value as SimpleIcon);
+        }
+      }
+      return map;
+    });
+  }
+  return slugMapPromise;
+}
+
+async function resolveSimpleIcon(slug: string): Promise<string> {
+  const slugMap = await simpleIconMap();
   const icon = slugMap.get(slug);
   if (!icon) throw new Error(`Simple icon not found: ${slug}`);
   const svg = icon.svg.replace('<svg ', `<svg fill="#${icon.hex}" `);
@@ -104,20 +120,32 @@ async function resolveGeistIcon(key: string): Promise<string> {
   return `data:image/svg+xml;base64,${btoa(svg)}`;
 }
 
-export async function resolveIcon(icon: string): Promise<string> {
+async function resolveCivicIcon(key: string): Promise<string> {
+  if (!/^[a-z0-9-]+$/.test(key)) throw new Error(`Invalid civic icon name: ${key}`);
+  const fullPath = resolve(civicIconsRoot, `${key}.svg`);
+  let svg = await readFile(fullPath, 'utf-8');
+  svg = svg.replace(/currentColor/g, '#555555');
+  return `data:image/svg+xml;base64,${btoa(svg)}`;
+}
+
+export async function resolveIcon(icon: string, options: ResolveIconOptions = {}): Promise<string> {
   const type = detectIconType(icon);
   try {
     switch (type) {
       case 'emoji':
+        if (options.allowRemote === false) throw new Error('Remote emoji resolution is disabled');
         return await resolveEmoji(icon);
       case 'favicon':
+        if (options.allowRemote === false) throw new Error('Remote favicon resolution is disabled');
         return await resolveFavicon(icon.slice('favicon:'.length));
       case 'cloud':
         return await resolveCloudIcon(icon);
       case 'geist':
         return await resolveGeistIcon(icon);
+      case 'civic':
+        return await resolveCivicIcon(icon.slice('civic:'.length));
       case 'named':
-        return resolveSimpleIcon(icon);
+        return await resolveSimpleIcon(icon);
       default:
         return '';
     }

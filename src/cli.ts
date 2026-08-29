@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
+import { spawn } from 'node:child_process';
 import { readFile, writeFile } from 'fs/promises';
-import { basename, extname, resolve } from 'path';
+import { basename, dirname, extname, resolve } from 'path';
+import { fileURLToPath } from 'node:url';
 import { parseSpec } from './parse.js';
 import { validate } from './validate.js';
 import { renderDiagram } from './render/index.js';
@@ -23,8 +25,20 @@ const program = new Command();
 
 program
   .name('diagrams')
-  .description('Generate beautiful diagrams from declarative specs (flow, gantt, timeline, quadrant)')
-  .version('0.1.0');
+  .description('Generate accessible diagrams and civic data visualizations from declarative specs')
+  .version('0.2.0');
+
+program
+  .command('setup-icons')
+  .description('Download the optional AWS and GCP icon pack')
+  .action(async () => {
+    const script = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'scripts', 'postinstall.mjs');
+    await new Promise<void>((resolveRun, rejectRun) => {
+      const child = spawn(process.execPath, [script], { stdio: 'inherit' });
+      child.once('error', rejectRun);
+      child.once('exit', code => code === 0 ? resolveRun() : rejectRun(new Error(`Icon setup exited with code ${code}`)));
+    });
+  });
 
 program
   .command('render')
@@ -78,6 +92,7 @@ program
         padding: parseInt(opts.padding as string),
         background: opts.background === false ? 'transparent' : undefined,
         showTitle: opts.title !== false ? undefined : false,
+        baseDir: input === '-' ? process.cwd() : dirname(resolve(input)),
       });
 
       // Determine output path

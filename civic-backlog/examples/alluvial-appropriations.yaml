@@ -1,0 +1,40 @@
+type: alluvial
+title: "Appropriations through the week"
+unit: usd
+caption: "Dollars that made it to adoption this week, sized by the add."
+source:
+  label: "County council, Aug 12–13"
+  href: "https://vigoledger.org/"
+
+stages:
+  - "Introduced"
+  - "Adopted"
+nodes:
+  - id: bldg-i
+    stage: "Introduced"
+    label: "Building emergencies"
+  - id: bldg-a
+    stage: "Adopted"
+    label: "Building emergencies"
+  - id: traffic-i
+    stage: "Introduced"
+    label: "Traffic study"
+  - id: traffic-a
+    stage: "Adopted"
+    label: "Traffic study"
+  - id: rescue-i
+    stage: "Introduced"
+    label: "Rescue truck"
+  - id: rescue-a
+    stage: "Adopted"
+    label: "Rescue truck"
+links:
+  - from: bldg-i
+    to: bldg-a
+    value: 520000
+  - from: traffic-i
+    to: traffic-a
+    value: 469000
+  - from: rescue-i
+    to: rescue-a
+    value: 225000

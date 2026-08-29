@@ -1,0 +1,17 @@
+type: waterfall
+title: "Building maintenance emergencies"
+unit: usd
+caption: "The county added $520,000 to cover a run of building-maintenance emergencies."
+source:
+  label: "County council, Aug 12"
+  href: "https://vigoledger.org/"
+
+start:
+  label: "Building maintenance"
+  value: 0
+steps:
+  - id: extra
+    label: "Emergency repairs"
+    value: 520000
+end:
+  label: "This year's total"

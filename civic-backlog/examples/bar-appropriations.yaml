@@ -1,0 +1,40 @@
+type: bar
+title: "This week's appropriations"
+unit: usd
+caption: "The largest add this week is $520,000 for building-maintenance emergencies."
+source:
+  label: "County council, Aug 12–13"
+  href: "https://vigoledger.org/"
+legend: false
+alt: "Six appropriations this week, from $520,000 for building emergencies down to $45,000 for Susie's Place."
+dataTable:
+  columns: [Item, Amount]
+  records:
+    - [Building emergencies, 520000]
+    - [Clinton Road traffic study, 469000]
+    - [Rescue truck, 225000]
+    - [Plow, 100000]
+    - [Warming center, 47500]
+    - ["Susie's Place", 45000]
+orientation: horizontal
+sort: desc
+
+items:
+  - id: buildings
+    label: "Building emergencies"
+    value: 520000
+  - id: traffic
+    label: "Clinton Road traffic study"
+    value: 469000
+  - id: rescue
+    label: "Rescue truck"
+    value: 225000
+  - id: plow
+    label: "Plow"
+    value: 100000
+  - id: warming
+    label: "Warming center"
+    value: 47500
+  - id: susie
+    label: "Susie's Place"
+    value: 45000

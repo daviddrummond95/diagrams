@@ -1,0 +1,31 @@
+type: agenda-states
+title: "Sheriff's Office budget, Aug 12–13"
+theme: default
+caption: "The budget committee deferred the Sheriff's Office budget, then held it again the next day."
+source:
+  label: "County budget committee, Aug 12–13"
+  href: "https://vigoledger.org/"
+legend:
+  - { label: "Current / reached", pattern: solid }
+  - { label: "Earlier step", pattern: hatch }
+  - { label: "Not yet" }
+alt: "Three chips left to right: Taken up (hatched, Aug 12), Deferred (hatched, Aug 12), Held again (filled, Aug 13). The Sheriff's Office budget is still deferred after two budget-committee days."
+
+item:
+  id: sheriff-budget
+  label: "Sheriff's Office budget"
+  icon: civic:sheriff
+  body: "Vigo County Council budget committee"
+  steps:
+    - id: taken-up
+      state: introduced
+      date: "2026-08-12"
+      label: "Taken up"
+    - id: hold-12
+      state: deferred
+      date: "2026-08-12"
+      label: "Deferred"
+    - id: hold-13
+      state: deferred
+      date: "2026-08-13"
+      label: "Held again"

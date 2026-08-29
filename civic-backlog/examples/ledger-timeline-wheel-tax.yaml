@@ -1,0 +1,31 @@
+type: timeline
+title: "Terre Haute wheel tax"
+direction: LR
+from: "2026-06-01"
+to: "2026-07-15"
+caption: "Council held General Ordinance 6, 2026 over on June 11 with no motion, then adopted it July 9 as a replacement, not an add-on, by unanimous voice vote."
+source:
+  - label: "City Council, Jun 11"
+    href: "https://www.vigoledger.org/h/2026-06-11-terre-haute-city-council-wheel-tax-tabled"
+  - label: "City Council, Jul 9"
+    href: "https://www.vigoledger.org/h/2026-07-09-terre-haute-city-council-wheel-tax-adopted"
+alt: "2026-06-11: GO 6-2026 held over, no motion. 2026-07-09: adopted unanimous voice vote, replaces rather than stacks on the county tax."
+dataTable:
+  columns: [date, label]
+  records:
+    - ["2026-06-11", "Held over, no motion"]
+    - ["2026-07-09", "Adopted GO 6-2026"]
+
+events:
+  - id: held
+    date: "2026-06-11"
+    label: "Held over, no motion"
+    body: "City Council"
+    href: "https://www.vigoledger.org/h/2026-06-11-terre-haute-city-council-wheel-tax-tabled"
+    description: "First reading of General Ordinance 6, 2026. No motion, no vote. Returns July 9."
+  - id: adopted
+    date: "2026-07-09"
+    label: "Adopted GO 6-2026"
+    body: "City Council"
+    href: "https://www.vigoledger.org/h/2026-07-09-terre-haute-city-council-wheel-tax-adopted"
+    description: "Unanimous voice vote. City says it replaces, not stacks on, the county tax."

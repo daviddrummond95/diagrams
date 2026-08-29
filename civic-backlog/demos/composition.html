@@ -1,0 +1,2864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Composition family — The Vigo Ledger</title>
+<style>
+
+  :root {
+    --cream: #F4EFE4;
+    --paper: #FBF7EE;
+    --ink: #2C2A26;
+    --muted: #6B655C;
+    --rule: #C9C0B0;
+    --green: #3F5C47;
+    --gold: #C9A227;
+    --clay: #C45C26;
+    --park: #7A8F4F;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--cream); color: var(--ink); }
+  body {
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Times New Roman", serif;
+    line-height: 1.45;
+  }
+  .mast {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 36px 28px 20px;
+    border-bottom: 3px solid var(--ink);
+  }
+  .kicker {
+    font-family: "Franklin Gothic Medium", "News Gothic", "Helvetica Neue", sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin: 0 0 8px;
+  }
+  h1 {
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 6px;
+    line-height: 1.05;
+  }
+  .deck {
+    font-size: 18px;
+    color: var(--muted);
+    margin: 0;
+    max-width: 42em;
+  }
+  .meta {
+    font-family: "Franklin Gothic Medium", "News Gothic", "Helvetica Neue", sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 14px;
+  }
+  main { max-width: 980px; margin: 0 auto; padding: 12px 28px 80px; }
+  section.figure {
+    padding: 36px 0 28px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .type {
+    font-family: "Franklin Gothic Medium", "News Gothic", "Helvetica Neue", sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 8px;
+  }
+  h2 {
+    font-size: 26px;
+    margin: 0 0 14px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+  .frame {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 16px 18px 12px;
+    overflow-x: auto;
+    width: fit-content;
+    max-width: 100%;
+  }
+  [data-type="small-multiples"] .frame,
+  [data-type="scorecard"] .frame,
+  [data-type="beeswarm"] .frame,
+  [data-type="connected-dot"] .frame,
+  [data-type="data-table"] .frame {
+    width: 100%;
+  }
+  [data-type="small-multiples"] svg {
+    width: 100%;
+  }
+  svg { display: block; max-width: 100%; height: auto; background: #F7F3EA; }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 22px;
+    padding: 12px 2px 4px;
+    font-family: "Franklin Gothic Medium", "News Gothic", "Helvetica Neue", sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+  }
+  [data-type="waffle"] .legend,
+  [data-type="isotype"] .legend {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .legend .item { display: flex; align-items: center; gap: 8px; }
+  .swatch {
+    width: 14px; height: 14px; border: 1px solid var(--ink);
+    display: inline-block; flex: 0 0 14px;
+  }
+  .caption {
+    font-size: 16px;
+    margin: 12px 0 4px;
+    max-width: 46em;
+  }
+  .source {
+    font-family: "Franklin Gothic Medium", "News Gothic", "Helvetica Neue", sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0;
+  }
+  .source a { color: var(--green); text-decoration: none; border-bottom: 1px solid var(--green); }
+  .source a:hover { background: #E7EFE8; }
+  .footnote, .note, figcaption {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 8px 0 0;
+  }
+  figcaption { font-style: italic; }
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0);
+    white-space: nowrap; border: 0;
+  }
+  table.scorecard, table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    background: var(--paper);
+  }
+  table.scorecard th, table.data-table th,
+  table.scorecard td, table.data-table td {
+    text-align: left;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: middle;
+  }
+  table.scorecard th, table.data-table th {
+    font-family: "Franklin Gothic Medium", "News Gothic", "Helvetica Neue", sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .status {
+    font-family: "Franklin Gothic Medium", "News Gothic", "Helvetica Neue", sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border: 1px solid var(--ink);
+  }
+  .status.kept-short { background: #F3D7C8; color: var(--clay); }
+  .status.unknown { background: var(--cream); color: var(--muted); }
+  .status.met { background: #D5DEC0; color: var(--green); }
+  s.struck { color: var(--muted); margin-left: 0.75em; padding-left: 0.15em; }
+  table.scorecard td:nth-child(2),
+  table.scorecard td:nth-child(3),
+  table.scorecard td:nth-child(4) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .bar-cell { white-space: nowrap; }
+  .bar-cell .num { display: inline-block; min-width: 4.5em; margin-right: 8px; }
+  svg.cell-bar { display: inline-block; vertical-align: middle; background: transparent; }
+  svg.inline-dot { display: inline-block; vertical-align: middle; margin-left: 8px; background: transparent; }
+  footer.colophon {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 24px 28px 48px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+</style>
+</head>
+<body>
+  <header class="mast">
+    <p class="kicker">diagrams.sh · Composition family preview</p>
+    <h1>The Vigo Ledger</h1>
+    <p class="deck">Part-to-whole, roster, and distribution. SVG geometry from YAML counts. CivicBase chrome. Not a library renderer.</p>
+    <p class="meta">Vol. I No. 1 · Terre Haute / Vigo County · week of Aug 28, 2026</p>
+  </header>
+  <main>
+    <section class="figure waffle" id="waffle-parcels" data-type="waffle">
+  <p class="type">waffle</p>
+  <h2>Unbilled conservancy parcels</h2>
+  <div class="frame">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 248 224" role="img" class="waffle" width="248" height="224">
+<title>Unbilled conservancy parcels</title>
+<desc>Grid of 84 cells, one per unbilled conservancy parcel.</desc>
+<rect class="cell" x="4" y="4" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="4" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="4" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="4" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="4" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="4" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="4" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="4" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="4" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="4" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="28" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="28" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="28" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="28" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="28" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="28" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="28" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="28" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="28" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="28" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="52" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="52" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="52" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="52" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="52" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="52" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="52" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="52" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="52" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="52" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="76" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="76" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="76" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="76" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="76" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="76" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="76" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="76" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="76" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="76" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="100" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="100" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="100" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="100" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="100" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="100" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="100" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="100" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="100" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="100" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="124" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="124" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="124" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="124" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="124" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="124" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="124" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="124" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="124" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="124" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="148" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="148" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="148" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="148" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="148" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="148" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="148" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="148" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="148" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="148" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="172" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="172" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="172" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="172" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="172" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="172" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="172" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="172" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="172" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="172" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="196" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="196" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="196" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="196" width="22" height="22" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.4"/>
+</svg>
+    <div class="legend" data-legend>
+<div class="item"><span class="swatch" style="background:#3F5C47"></span> ~ Unbilled</div>
+</div>
+  </div>
+  <p class="caption">A years-old billing glitch let about 84 conservancy parcels skip the tax; no back taxes will be collected.</p>
+  <p class="source">Source: <a href="https://vigoledger.org/h/2026-08-04-vigo-county-commissioners-conservancy-tax-correction">County commissioners, Aug 4</a></p>
+  
+  
+  <table class="visually-hidden"><caption>Unbilled conservancy parcels</caption><thead><tr><th>Category</th><th>Count</th></tr></thead><tbody><tr><td>Unbilled</td><td>84</td></tr></tbody></table>
+</section><section class="figure waffle" id="waffle-beds" data-type="waffle">
+  <p class="type">waffle</p>
+  <h2>Shelter beds asked at the fairgrounds</h2>
+  <div class="frame">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 248 248" role="img" class="waffle" width="248" height="248">
+<title>Shelter beds asked at the fairgrounds</title>
+<desc>10 by 10 grid of 100 shelter beds.</desc>
+<rect class="cell" x="4" y="4" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="4" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="4" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="4" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="4" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="4" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="4" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="4" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="4" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="4" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="28" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="28" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="28" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="28" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="28" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="28" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="28" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="28" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="28" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="28" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="52" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="52" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="52" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="52" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="52" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="52" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="52" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="52" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="52" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="52" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="76" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="76" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="76" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="76" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="76" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="76" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="76" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="76" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="76" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="76" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="100" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="100" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="100" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="100" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="100" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="100" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="100" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="100" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="100" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="100" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="124" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="124" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="124" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="124" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="124" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="124" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="124" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="124" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="124" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="124" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="148" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="148" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="148" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="148" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="148" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="148" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="148" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="148" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="148" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="148" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="172" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="172" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="172" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="172" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="172" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="172" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="172" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="172" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="172" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="172" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="196" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="196" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="196" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="196" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="196" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="196" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="196" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="196" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="196" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="196" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="220" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="220" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="220" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="220" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="220" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="220" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="220" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="220" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="220" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="220" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+</svg>
+    <div class="legend" data-legend>
+<div class="item"><span class="swatch" style="background:#C45C26"></span> Shelter beds</div>
+</div>
+  </div>
+  <p class="caption">A trustee asked council to approve 100 homeless shelter beds at the fairgrounds with no city money, and got no response on the record.</p>
+  <p class="source">Source: <a href="https://vigoledger.org/h/2026-06-04-terre-haute-city-council-homeless-shelter-fairgrounds-proposal">City council, Jun 4</a></p>
+  
+  
+  <table class="visually-hidden"><caption>Shelter beds asked at the fairgrounds</caption><thead><tr><th>Category</th><th>Count</th></tr></thead><tbody><tr><td>Shelter beds</td><td>100</td></tr></tbody></table>
+</section><section class="figure waffle" id="waffle-demolitions" data-type="waffle">
+  <p class="type">waffle</p>
+  <h2>Houses taken down this spring</h2>
+  <div class="frame">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 80" role="img" class="waffle" width="128" height="80">
+<title>Houses taken down this spring</title>
+<desc>About 10 May demolitions and 5 completed in April.</desc>
+<rect class="cell" x="4" y="4" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="4" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="4" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="4" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="4" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="28" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="28" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="28" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="28" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="28" width="22" height="22" fill="#C45C26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="52" width="22" height="22" fill="#6B655C" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="52" width="22" height="22" fill="#6B655C" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="52" width="22" height="22" fill="#6B655C" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="52" width="22" height="22" fill="#6B655C" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="52" width="22" height="22" fill="#6B655C" stroke="#2C2A26" stroke-width="0.4"/>
+</svg>
+    <div class="legend" data-legend>
+<div class="item"><span class="swatch" style="background:#C45C26"></span> May (about)</div>
+<div class="item"><span class="swatch" style="background:#6B655C"></span> April (completed)</div>
+</div>
+  </div>
+  <p class="caption">The city planned about ten more demolitions in May, on top of five already finished in April.</p>
+  <p class="source">Source: <a href="https://vigoledger.org/h/2026-05-07-terre-haute-city-council-blight-demolitions">City council, May 7</a></p>
+  
+  
+  <table class="visually-hidden"><caption>Houses taken down this spring</caption><thead><tr><th>Category</th><th>Count</th></tr></thead><tbody><tr><td>May (about)</td><td>10</td></tr><tr><td>April (completed)</td><td>5</td></tr></tbody></table>
+</section><section class="figure waffle" id="waffle-cameras" data-type="waffle">
+  <p class="type">waffle</p>
+  <h2>Flock cameras already in place</h2>
+  <div class="frame">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 248 80" role="img" class="waffle" width="248" height="80">
+<title>Flock cameras already in place</title>
+<desc>Grid of 30 cells, one per Flock camera.</desc>
+<rect class="cell" x="4" y="4" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="4" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="4" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="4" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="4" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="4" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="4" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="4" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="4" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="4" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="28" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="28" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="28" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="28" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="28" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="28" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="28" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="28" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="28" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="28" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="52" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="52" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="52" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="52" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="52" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="52" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="52" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="52" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="52" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="52" width="22" height="22" fill="#2C2A26" stroke="#2C2A26" stroke-width="0.4"/>
+</svg>
+    <div class="legend" data-legend>
+<div class="item"><span class="swatch" style="background:#2C2A26"></span> Cameras</div>
+</div>
+  </div>
+  <p class="caption">Thirty Flock license-plate cameras have been in place since 2024.</p>
+  <p class="source">Source: <a href="https://vigoledger.org/h/2026-06-11-terre-haute-city-council-flock-camera-privacy-policy">City council, Jun 11</a></p>
+  
+  
+  <table class="visually-hidden"><caption>Flock cameras already in place</caption><thead><tr><th>Category</th><th>Count</th></tr></thead><tbody><tr><td>Cameras</td><td>30</td></tr></tbody></table>
+</section><section class="figure waffle" id="waffle-lots" data-type="waffle">
+  <p class="type">waffle</p>
+  <h2>Former ISU lots</h2>
+  <div class="frame">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 248 200" role="img" class="waffle" width="248" height="200">
+<title>Former ISU lots</title>
+<desc>Grid of 74 cells, one per former ISU lot.</desc>
+<rect class="cell" x="4" y="4" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="4" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="4" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="4" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="4" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="4" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="4" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="4" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="4" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="4" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="28" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="28" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="28" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="28" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="28" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="28" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="28" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="28" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="28" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="28" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="52" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="52" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="52" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="52" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="52" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="52" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="52" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="52" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="52" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="52" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="76" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="76" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="76" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="76" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="76" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="76" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="76" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="76" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="76" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="76" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="100" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="100" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="100" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="100" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="100" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="100" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="100" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="100" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="100" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="100" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="124" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="124" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="124" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="124" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="124" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="124" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="124" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="124" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="124" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="124" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="148" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="148" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="148" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="148" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="100" y="148" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="124" y="148" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="148" y="148" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="172" y="148" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="196" y="148" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="220" y="148" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="4" y="172" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="28" y="172" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="52" y="172" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+<rect class="cell" x="76" y="172" width="22" height="22" fill="#7A8F4F" stroke="#2C2A26" stroke-width="0.4"/>
+</svg>
+    <div class="legend" data-legend>
+<div class="item"><span class="swatch" style="background:#7A8F4F"></span> Former ISU lots</div>
+</div>
+  </div>
+  <p class="caption">The city moved on 74 former ISU lots from 3rd–13th to Locust, $4,000 purchase plus $6,500 infrastructure incentive each.</p>
+  <p class="source">Source: <a href="https://vigoledger.org/h/2026-03-05-terre-haute-city-council-isu-parcels-redevelopment">City council, Mar 5</a></p>
+  
+  
+  <table class="visually-hidden"><caption>Former ISU lots</caption><thead><tr><th>Category</th><th>Count</th></tr></thead><tbody><tr><td>Former ISU lots</td><td>74</td></tr></tbody></table>
+</section><section class="figure isotype" id="isotype-beds" data-type="isotype">
+  <p class="type">isotype</p>
+  <h2>100 shelter beds</h2>
+  <div class="frame">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 248 248" role="img" class="isotype" width="248" height="248">
+<title>100 shelter beds</title>
+<desc>One hundred bed icons, one per shelter bed asked.</desc>
+<g class="unit" data-icon="civic:bed" transform="translate(4,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(28,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(52,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(76,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(100,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(124,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(148,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(172,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(196,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(220,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(4,28) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(28,28) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(52,28) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(76,28) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(100,28) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(124,28) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(148,28) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(172,28) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(196,28) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(220,28) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(4,52) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(28,52) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(52,52) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(76,52) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(100,52) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(124,52) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(148,52) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(172,52) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(196,52) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(220,52) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(4,76) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(28,76) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(52,76) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(76,76) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(100,76) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(124,76) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(148,76) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(172,76) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(196,76) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(220,76) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(4,100) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(28,100) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(52,100) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(76,100) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(100,100) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(124,100) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(148,100) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(172,100) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(196,100) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(220,100) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(4,124) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(28,124) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(52,124) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(76,124) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(100,124) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(124,124) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(148,124) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(172,124) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(196,124) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(220,124) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(4,148) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(28,148) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(52,148) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(76,148) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(100,148) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(124,148) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(148,148) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(172,148) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(196,148) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(220,148) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(4,172) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(28,172) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(52,172) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(76,172) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(100,172) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(124,172) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(148,172) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(172,172) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(196,172) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(220,172) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(4,196) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(28,196) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(52,196) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(76,196) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(100,196) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(124,196) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(148,196) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(172,196) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(196,196) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(220,196) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(4,220) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(28,220) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(52,220) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(76,220) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(100,220) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(124,220) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(148,220) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(172,220) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(196,220) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+<g class="unit" data-icon="civic:bed" transform="translate(220,220) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 9.6v10.6"/>
+  <path d="M3.4 9.6h5.2"/>
+  <path d="M3.4 14.4h17.2V19H3.4z"/>
+  <path d="M20.6 19v-4.6"/>
+  <path d="M8.6 11.8h4.8v2.6H8.6z"/>
+  <path d="M3.4 19h17.2"/>
+</g></g>
+</svg>
+    <div class="legend" data-legend>
+<div class="item"><span class="swatch" style="background:#C45C26"></span> Shelter beds</div>
+</div>
+  </div>
+  <p class="caption">A trustee told council 100 people need beds at the fairgrounds before the city can enforce its camping rules.</p>
+  <p class="source">Source: <a href="https://vigoledger.org/h/2026-06-04-terre-haute-city-council-homeless-shelter-fairgrounds-proposal">City council, Jun 4</a></p>
+  
+  <figcaption>Unit encoding civic:bed (locked civic: slug). Glyph from icons/civic/ when the file lands; demo stand-in path until then. Not a waffle square.</figcaption>
+  
+</section><section class="figure isotype" id="isotype-parcels" data-type="isotype">
+  <p class="type">isotype</p>
+  <h2>84 unbilled parcels</h2>
+  <div class="frame">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 248 224" role="img" class="isotype" width="248" height="224">
+<title>84 unbilled parcels</title>
+<desc>Eighty-four parcel icons, one per unbilled conservancy parcel.</desc>
+<g class="unit" data-icon="civic:parcel" transform="translate(4,4) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(28,4) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(52,4) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(76,4) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(100,4) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(124,4) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(148,4) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(172,4) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(196,4) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(220,4) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(4,28) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(28,28) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(52,28) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(76,28) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(100,28) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(124,28) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(148,28) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(172,28) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(196,28) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(220,28) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(4,52) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(28,52) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(52,52) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(76,52) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(100,52) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(124,52) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(148,52) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(172,52) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(196,52) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(220,52) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(4,76) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(28,76) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(52,76) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(76,76) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(100,76) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(124,76) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(148,76) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(172,76) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(196,76) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(220,76) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(4,100) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(28,100) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(52,100) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(76,100) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(100,100) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(124,100) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(148,100) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(172,100) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(196,100) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(220,100) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(4,124) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(28,124) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(52,124) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(76,124) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(100,124) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(124,124) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(148,124) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(172,124) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(196,124) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(220,124) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(4,148) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(28,148) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(52,148) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(76,148) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(100,148) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(124,148) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(148,148) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(172,148) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(196,148) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(220,148) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(4,172) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(28,172) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(52,172) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(76,172) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(100,172) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(124,172) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(148,172) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(172,172) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(196,172) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(220,172) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(4,196) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(28,196) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(52,196) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+<g class="unit" data-icon="civic:parcel" transform="translate(76,196) scale(1.8333)"><g class="civic-file" fill="#3F5C47">
+  <path d="M4.4 6.4L14.6 3.6 20.2 10.6 16.4 20 5.2 17.2z"/>
+  <circle cx="11.6" cy="11.2" r="1.4"/>
+  <path d="M11.6 12.6v4.2"/>
+</g></g>
+</svg>
+    <div class="legend" data-legend>
+<div class="item"><span class="swatch" style="background:#3F5C47"></span> ~ Unbilled parcels</div>
+</div>
+  </div>
+  <p class="caption">A years-old billing glitch let about 84 conservancy parcels skip the tax; no back taxes will be collected.</p>
+  <p class="source">Source: <a href="https://vigoledger.org/h/2026-08-04-vigo-county-commissioners-conservancy-tax-correction">County commissioners, Aug 4</a></p>
+  
+  <figcaption>Unit encoding civic:parcel (locked civic: slug). Glyph from icons/civic/ when the file lands; demo stand-in path until then. Not a waffle square.</figcaption>
+  
+</section><section class="figure isotype" id="isotype-cameras" data-type="isotype">
+  <p class="type">isotype</p>
+  <h2>30 Flock cameras</h2>
+  <div class="frame">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 248 80" role="img" class="isotype" width="248" height="80">
+<title>30 Flock cameras</title>
+<desc>Thirty camera icons, one per Flock camera.</desc>
+<g class="unit" data-icon="civic:camera" transform="translate(4,4) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(28,4) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(52,4) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(76,4) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(100,4) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(124,4) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(148,4) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(172,4) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(196,4) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(220,4) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(4,28) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(28,28) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(52,28) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(76,28) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(100,28) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(124,28) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(148,28) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(172,28) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(196,28) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(220,28) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(4,52) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(28,52) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(52,52) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(76,52) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(100,52) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(124,52) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(148,52) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(172,52) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(196,52) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:camera" transform="translate(220,52) scale(1.8333)"><g class="civic-file" fill="#2C2A26">
+  <path d="M3.6 3.4h2.4v17.2H3.6z"/>
+  <path d="M6 5h8.2"/>
+  <path d="M12.4 5h8.2v6.6h-8.2z"/>
+  <circle cx="16.8" cy="8.3" r="2.05"/>
+  <path d="M20.6 6.2h1.4v2.2"/>
+</g></g>
+</svg>
+    <div class="legend" data-legend>
+<div class="item"><span class="swatch" style="background:#2C2A26"></span> Cameras</div>
+</div>
+  </div>
+  <p class="caption">Thirty Flock license-plate cameras have been in place since 2024.</p>
+  <p class="source">Source: <a href="https://vigoledger.org/h/2026-06-11-terre-haute-city-council-flock-camera-privacy-policy">City council, Jun 11</a></p>
+  
+  <figcaption>Unit encoding civic:camera (locked civic: slug). Glyph from icons/civic/ when the file lands; demo stand-in path until then. Not a waffle square.</figcaption>
+  
+</section><section class="figure isotype" id="isotype-demolition" data-type="isotype">
+  <p class="type">isotype</p>
+  <h2>About 10 demolitions</h2>
+  <div class="frame">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 248 32" role="img" class="isotype" width="248" height="32">
+<title>About 10 demolitions</title>
+<desc>About ten demolition icons.</desc>
+<g class="unit" data-icon="civic:demolition" transform="translate(4,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 12.2L12 4 20.6 12.2"/>
+  <path d="M5.4 11v10h13.2V11"/>
+  <path d="M7.4 7.2l9.2 12.4"/>
+  <path d="M16.6 7.2 7.4 19.6"/>
+</g></g>
+<g class="unit" data-icon="civic:demolition" transform="translate(28,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 12.2L12 4 20.6 12.2"/>
+  <path d="M5.4 11v10h13.2V11"/>
+  <path d="M7.4 7.2l9.2 12.4"/>
+  <path d="M16.6 7.2 7.4 19.6"/>
+</g></g>
+<g class="unit" data-icon="civic:demolition" transform="translate(52,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 12.2L12 4 20.6 12.2"/>
+  <path d="M5.4 11v10h13.2V11"/>
+  <path d="M7.4 7.2l9.2 12.4"/>
+  <path d="M16.6 7.2 7.4 19.6"/>
+</g></g>
+<g class="unit" data-icon="civic:demolition" transform="translate(76,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 12.2L12 4 20.6 12.2"/>
+  <path d="M5.4 11v10h13.2V11"/>
+  <path d="M7.4 7.2l9.2 12.4"/>
+  <path d="M16.6 7.2 7.4 19.6"/>
+</g></g>
+<g class="unit" data-icon="civic:demolition" transform="translate(100,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 12.2L12 4 20.6 12.2"/>
+  <path d="M5.4 11v10h13.2V11"/>
+  <path d="M7.4 7.2l9.2 12.4"/>
+  <path d="M16.6 7.2 7.4 19.6"/>
+</g></g>
+<g class="unit" data-icon="civic:demolition" transform="translate(124,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 12.2L12 4 20.6 12.2"/>
+  <path d="M5.4 11v10h13.2V11"/>
+  <path d="M7.4 7.2l9.2 12.4"/>
+  <path d="M16.6 7.2 7.4 19.6"/>
+</g></g>
+<g class="unit" data-icon="civic:demolition" transform="translate(148,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 12.2L12 4 20.6 12.2"/>
+  <path d="M5.4 11v10h13.2V11"/>
+  <path d="M7.4 7.2l9.2 12.4"/>
+  <path d="M16.6 7.2 7.4 19.6"/>
+</g></g>
+<g class="unit" data-icon="civic:demolition" transform="translate(172,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 12.2L12 4 20.6 12.2"/>
+  <path d="M5.4 11v10h13.2V11"/>
+  <path d="M7.4 7.2l9.2 12.4"/>
+  <path d="M16.6 7.2 7.4 19.6"/>
+</g></g>
+<g class="unit" data-icon="civic:demolition" transform="translate(196,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 12.2L12 4 20.6 12.2"/>
+  <path d="M5.4 11v10h13.2V11"/>
+  <path d="M7.4 7.2l9.2 12.4"/>
+  <path d="M16.6 7.2 7.4 19.6"/>
+</g></g>
+<g class="unit" data-icon="civic:demolition" transform="translate(220,4) scale(1.8333)"><g class="civic-file" fill="#C45C26">
+  <path d="M3.4 12.2L12 4 20.6 12.2"/>
+  <path d="M5.4 11v10h13.2V11"/>
+  <path d="M7.4 7.2l9.2 12.4"/>
+  <path d="M16.6 7.2 7.4 19.6"/>
+</g></g>
+</svg>
+    <div class="legend" data-legend>
+<div class="item"><span class="swatch" style="background:#C45C26"></span> ~ May</div>
+</div>
+  </div>
+  <p class="caption">The city planned about ten more demolitions in May.</p>
+  <p class="source">Source: <a href="https://vigoledger.org/h/2026-05-07-terre-haute-city-council-blight-demolitions">City council, May 7</a></p>
+  
+  <figcaption>Unit encoding civic:demolition (locked civic: slug). Glyph from icons/civic/ when the file lands; demo stand-in path until then. Not a waffle square.</figcaption>
+  
+</section><section class="figure isotype" id="isotype-lots" data-type="isotype">
+  <p class="type">isotype</p>
+  <h2>74 former ISU lots</h2>
+  <div class="frame">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 248 200" role="img" class="isotype" width="248" height="200">
+<title>74 former ISU lots</title>
+<desc>Seventy-four lot icons, one per former ISU lot.</desc>
+<g class="unit" data-icon="civic:lot" transform="translate(4,4) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(28,4) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(52,4) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(76,4) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(100,4) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(124,4) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(148,4) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(172,4) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(196,4) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(220,4) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(4,28) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(28,28) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(52,28) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(76,28) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(100,28) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(124,28) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(148,28) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(172,28) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(196,28) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(220,28) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(4,52) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(28,52) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(52,52) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(76,52) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(100,52) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(124,52) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(148,52) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(172,52) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(196,52) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(220,52) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(4,76) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(28,76) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(52,76) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(76,76) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(100,76) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(124,76) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(148,76) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(172,76) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(196,76) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(220,76) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(4,100) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(28,100) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(52,100) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(76,100) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(100,100) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(124,100) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(148,100) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(172,100) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(196,100) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(220,100) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(4,124) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(28,124) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(52,124) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(76,124) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(100,124) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(124,124) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(148,124) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(172,124) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(196,124) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(220,124) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(4,148) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(28,148) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(52,148) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(76,148) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(100,148) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(124,148) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(148,148) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(172,148) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(196,148) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(220,148) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(4,172) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(28,172) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(52,172) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+<g class="unit" data-icon="civic:lot" transform="translate(76,172) scale(1.8333)"><g class="civic-file" fill="#7A8F4F">
+  <path d="M4.6 5.8h14.8v13.4H4.6z"/>
+  <path d="M4.6 5.8L2.8 3.6"/>
+  <path d="M19.4 5.8l1.8-2.2"/>
+  <path d="M4.6 19.2L2.8 21.4"/>
+  <path d="M19.4 19.2l1.8 2.2"/>
+</g></g>
+</svg>
+    <div class="legend" data-legend>
+<div class="item"><span class="swatch" style="background:#7A8F4F"></span> Former ISU lots</div>
+</div>
+  </div>
+  <p class="caption">The city moved on 74 former ISU lots from 3rd–13th to Locust.</p>
+  <p class="source">Source: <a href="https://vigoledger.org/h/2026-03-05-terre-haute-city-council-isu-parcels-redevelopment">City council, Mar 5</a></p>
+  
+  <figcaption>Unit encoding civic:lot (locked civic: slug). Glyph from icons/civic/ when the file lands; demo stand-in path until then. Not a waffle square.</figcaption>
+  
+</section><section class="figure" id="small-multiples" data-type="small-multiples">
+  <p class="type">small-multiples</p>
+  <h2>Budget lines held</h2>
+  <div class="frame">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 916 156" role="img" class="small-multiples" width="916" height="156">
+<title>Budget lines held</title>
+<desc>Five panels, one per held budget line. Amounts not yet in the notes.</desc>
+<g class="panel" data-panel="sheriff"><rect x="10.0" y="10.0" width="168.0" height="128.0" fill="#FBF7EE" stroke="#2C2A26" stroke-width="1.1"/><text x="94.0" y="50.0" font-size="14" text-anchor="middle" fill="#2C2A26" font-weight="bold">Sheriff</text><text x="94.0" y="82.0" font-size="16" text-anchor="middle" fill="#C45C26" font-weight="normal">Held</text><text x="94.0" y="110.0" font-size="13" text-anchor="middle" fill="#6B655C" font-weight="normal">n/a</text></g>
+<g class="panel" data-panel="jjc"><rect x="192.0" y="10.0" width="168.0" height="128.0" fill="#FBF7EE" stroke="#2C2A26" stroke-width="1.1"/><text x="276.0" y="50.0" font-size="14" text-anchor="middle" fill="#2C2A26" font-weight="bold">JJC</text><text x="276.0" y="82.0" font-size="16" text-anchor="middle" fill="#C45C26" font-weight="normal">Held</text><text x="276.0" y="110.0" font-size="13" text-anchor="middle" fill="#6B655C" font-weight="normal">n/a</text></g>
+<g class="panel" data-panel="weights"><rect x="374.0" y="10.0" width="168.0" height="128.0" fill="#FBF7EE" stroke="#2C2A26" stroke-width="1.1"/><text x="458.0" y="50.0" font-size="14" text-anchor="middle" fill="#2C2A26" font-weight="bold">Weights &amp; measures</text><text x="458.0" y="82.0" font-size="16" text-anchor="middle" fill="#C45C26" font-weight="normal">Held</text><text x="458.0" y="110.0" font-size="13" text-anchor="middle" fill="#6B655C" font-weight="normal">n/a</text></g>
+<g class="panel" data-panel="tower"><rect x="556.0" y="10.0" width="168.0" height="128.0" fill="#FBF7EE" stroke="#2C2A26" stroke-width="1.1"/><text x="640.0" y="50.0" font-size="14" text-anchor="middle" fill="#2C2A26" font-weight="bold">Tower</text><text x="640.0" y="82.0" font-size="16" text-anchor="middle" fill="#C45C26" font-weight="normal">Held</text><text x="640.0" y="110.0" font-size="13" text-anchor="middle" fill="#6B655C" font-weight="normal">n/a</text></g>
+<g class="panel" data-panel="salaries"><rect x="738.0" y="10.0" width="168.0" height="128.0" fill="#FBF7EE" stroke="#2C2A26" stroke-width="1.1"/><text x="822.0" y="50.0" font-size="14" text-anchor="middle" fill="#2C2A26" font-weight="bold">Salaries</text><text x="822.0" y="82.0" font-size="16" text-anchor="middle" fill="#C45C26" font-weight="normal">Held</text><text x="822.0" y="110.0" font-size="13" text-anchor="middle" fill="#6B655C" font-weight="normal">n/a</text></g>
+</svg>
+    
+  </div>
+  <p class="caption">The budget committee held the sheriff, Juvenile Justice Center, weights and measures, tower, and salary lines; dollar amounts were not read into this week&#x27;s record.</p>
+  <p class="source">Source: <a href="https://vigoledger.org/h/2026-08-13-vigo-county-budget-committee-recess-salaries-deferred">Budget committee, Aug 12–13</a></p>
+  <p class="footnote">Also: <a href="https://vigoledger.org/h/2026-08-13-vigo-county-budget-committee-sheriff-budget-deferred">sheriff deferred</a> · <a href="https://vigoledger.org/h/2026-08-12-vigo-county-budget-committee-sheriff-budget-held-off">sheriff held off</a> · <a href="https://vigoledger.org/h/2026-08-13-vigo-county-budget-committee-juvenile-justice-center-items-deferred">JJC</a> · <a href="https://vigoledger.org/h/2026-08-13-vigo-county-budget-committee-weights-and-measures-raise-deferred">weights &amp; measures</a>.</p>
+  
+  
+</section><section class="figure" id="scorecard" data-type="scorecard">
+  <p class="type">scorecard</p>
+  <h2>Abatements: promised vs delivered</h2>
+  <div class="frame">
+    <table class="scorecard"><thead><tr><th>Entity</th><th>Promised</th><th>Delivered</th><th>Gap</th><th>Status</th></tr></thead><tbody><tr data-row="chi"><td>CHI Overhead Doors</td><td>130</td><td>54</td><td>-76</td><td><span class="status kept-short">kept-short</span></td></tr><tr data-row="govina"><td>Govina Inc.</td><td>n/a</td><td>62 <s class="struck">152</s></td><td>—</td><td><span class="status unknown">unknown</span></td></tr><tr data-row="miller-parrott"><td>Miller-Parrott Lofts</td><td>n/a</td><td>2</td><td>—</td><td><span class="status unknown">unknown</span></td></tr></tbody></table>
+    
+  </div>
+  <p class="caption">Council kept CHI Overhead Doors&#x27; tax break even though hiring landed at 54 of 130 promised jobs, and kept Govina&#x27;s after a W-2 counting error.</p>
+  <p class="source">Source: <a href="https://vigoledger.org/h/2026-07-09-terre-haute-city-council-chi-overhead-doors-abatement">City council, Jul 9</a></p>
+  <p class="footnote">Govina: <a href="https://vigoledger.org/h/2026-07-09-terre-haute-city-council-govina-cf1-correction">City council, Jul 9 CF-1</a>. Miller-Parrott: <a href="https://vigoledger.org/h/2026-05-14-terre-haute-city-council-miller-parrott-employee-count">City council, May 14</a>.</p>
+  
+  
+</section><section class="figure" id="beeswarm" data-type="beeswarm">
+  <p class="type">beeswarm</p>
+  <h2>Asks on one axis</h2>
+  <div class="frame">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 952 320" role="img" class="beeswarm" width="952" height="320">
+<title>Asks on one axis</title>
+<desc>Dots on a dollar axis from $4,500 clothing allowance to $502,000 seized-asset ask, with this week&#x27;s other published appropriations.</desc>
+<line x1="56.0" y1="252.0" x2="896.0" y2="252.0" stroke="#2C2A26" stroke-width="1.1"/>
+<line x1="56.0" y1="252.0" x2="56.0" y2="257.0" stroke="#2C2A26" stroke-width="1"/>
+<text x="56.0" y="272.0" font-size="11" text-anchor="middle" fill="#6B655C" font-weight="normal" font-family='Franklin Gothic Medium, News Gothic, Helvetica Neue, sans-serif'>$0</text>
+<line x1="217.5" y1="252.0" x2="217.5" y2="257.0" stroke="#2C2A26" stroke-width="1"/>
+<text x="217.5" y="272.0" font-size="11" text-anchor="middle" fill="#6B655C" font-weight="normal" font-family='Franklin Gothic Medium, News Gothic, Helvetica Neue, sans-serif'>$100k</text>
+<line x1="459.8" y1="252.0" x2="459.8" y2="257.0" stroke="#2C2A26" stroke-width="1"/>
+<text x="459.8" y="272.0" font-size="11" text-anchor="middle" fill="#6B655C" font-weight="normal" font-family='Franklin Gothic Medium, News Gothic, Helvetica Neue, sans-serif'>$250k</text>
+<line x1="863.7" y1="252.0" x2="863.7" y2="257.0" stroke="#2C2A26" stroke-width="1"/>
+<text x="863.7" y="272.0" font-size="11" text-anchor="middle" fill="#6B655C" font-weight="normal" font-family='Franklin Gothic Medium, News Gothic, Helvetica Neue, sans-serif'>$500k</text>
+<circle class="bee" data-id="clothing" data-label="Clothing allowance" cx="63.27" cy="168.00" r="6" fill="#C45C26" stroke="#2C2A26" stroke-width="0.9"/>
+<circle class="bee" data-id="warming" data-label="Warming center" cx="132.73" cy="168.00" r="6" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.9"/>
+<circle class="bee" data-id="susie" data-label="Susie&#x27;s Place" cx="128.69" cy="180.50" r="6" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.9"/>
+<circle class="bee" data-id="plow" data-label="Plow" cx="217.54" cy="168.00" r="6" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.9"/>
+<circle class="bee" data-id="rescue" data-label="Rescue truck" cx="419.46" cy="168.00" r="6" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.9"/>
+<circle class="bee" data-id="traffic" data-label="Traffic study" cx="813.62" cy="168.00" r="6" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.9"/>
+<circle class="bee" data-id="buildings" data-label="Building emergencies" cx="896.00" cy="168.00" r="6" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.9"/>
+<circle class="bee" data-id="seized" data-label="Seized-asset ask" cx="866.92" cy="168.00" r="6" fill="#C45C26" stroke="#2C2A26" stroke-width="0.9"/>
+<line x1="63.3" y1="160.0" x2="83.3" y2="99.0" stroke="#2C2A26" stroke-width="0.8"/>
+<a href="https://vigoledger.org/h/2026-08-04-vigo-county-council-sunshine-building-security-clothing-allowance"><text text-decoration="underline" x="81.3" y="96.0" font-size="13" text-anchor="start" fill="#3F5C47" font-weight="normal" font-family='Franklin Gothic Medium, News Gothic, Helvetica Neue, sans-serif'>$4,500 clothing allowance</text></a>
+<line x1="866.9" y1="160.0" x2="848.9" y2="99.0" stroke="#2C2A26" stroke-width="0.8"/>
+<a href="https://vigoledger.org/h/2026-08-04-vigo-county-council-sunshine-prosecutor-seized-assets-appropriation"><text text-decoration="underline" x="850.9" y="96.0" font-size="13" text-anchor="end" fill="#3F5C47" font-weight="normal" font-family='Franklin Gothic Medium, News Gothic, Helvetica Neue, sans-serif'>seized-asset ask</text></a>
+</svg>
+    
+  </div>
+  <p class="caption">A $4,500 clothing allowance for three part-time security officers sits on the same scale as a $502,000 seized-asset ask.</p>
+  <p class="source">Source: <a href="https://vigoledger.org/h/2026-08-04-vigo-county-council-sunshine-building-security-clothing-allowance">County council, Aug 4</a></p>
+  
+  
+  
+</section><section class="figure" id="connected-dot" data-type="connected-dot">
+  <p class="type">connected-dot</p>
+  <h2>Jobs promised vs reported</h2>
+  <div class="frame">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 916 290" role="img" class="connected-dot" width="916" height="290">
+<title>Jobs promised vs reported</title>
+<desc>Three rows: CHI 130 to 54, Govina 152 W-2s to 62 average, Miller-Parrott promised jobs not stated to 2 observed.</desc>
+<line x1="248.0" y1="242.0" x2="868.0" y2="242.0" stroke="#2C2A26" stroke-width="1"/>
+<line x1="248.0" y1="242.0" x2="248.0" y2="246.0" stroke="#2C2A26"/>
+<text x="248.0" y="260.0" font-size="12" text-anchor="middle" fill="#6B655C" font-weight="normal" font-family='Franklin Gothic Medium, News Gothic, Helvetica Neue, sans-serif'>2</text>
+<line x1="496.0" y1="242.0" x2="496.0" y2="246.0" stroke="#2C2A26"/>
+<text x="496.0" y="260.0" font-size="12" text-anchor="middle" fill="#6B655C" font-weight="normal" font-family='Franklin Gothic Medium, News Gothic, Helvetica Neue, sans-serif'>62</text>
+<line x1="777.1" y1="242.0" x2="777.1" y2="246.0" stroke="#2C2A26"/>
+<text x="777.1" y="260.0" font-size="12" text-anchor="middle" fill="#6B655C" font-weight="normal" font-family='Franklin Gothic Medium, News Gothic, Helvetica Neue, sans-serif'>130</text>
+<line x1="868.0" y1="242.0" x2="868.0" y2="246.0" stroke="#2C2A26"/>
+<text x="868.0" y="260.0" font-size="12" text-anchor="middle" fill="#6B655C" font-weight="normal" font-family='Franklin Gothic Medium, News Gothic, Helvetica Neue, sans-serif'>152</text>
+<g class="cd-row" id="cd-chi" data-row="chi">
+<text x="12.0" y="56.0" font-size="14" text-anchor="start" fill="#2C2A26" font-weight="normal">CHI Overhead Doors</text>
+<line class="connector" x1="777.0666666666667" y1="52.0" x2="462.93333333333334" y2="52.0" stroke="#9B3A2F" stroke-width="2.2"/>
+<circle class="from" cx="777.0667" cy="52.0" r="6.0" fill="#FBF7EE" stroke="#9B3A2F" stroke-width="1.5"/>
+<circle class="to" cx="462.9333" cy="52.0" r="6.0" fill="#9B3A2F" stroke="#2C2A26" stroke-width="0.8"/>
+<text x="777.1" y="34.0" font-size="13" text-anchor="middle" fill="#6B655C" font-weight="normal" font-family='Franklin Gothic Medium, News Gothic, Helvetica Neue, sans-serif'>130</text>
+<text x="462.9" y="34.0" font-size="13" text-anchor="middle" fill="#2C2A26" font-weight="normal" font-family='Franklin Gothic Medium, News Gothic, Helvetica Neue, sans-serif'>54</text>
+</g>
+<g class="cd-row" id="cd-govina" data-row="govina">
+<text x="12.0" y="122.0" font-size="14" text-anchor="start" fill="#2C2A26" font-weight="normal">Govina Inc.</text>
+<line class="connector" x1="868.0" y1="118.0" x2="496.0" y2="118.0" stroke="#6B7280" stroke-width="2.2"/>
+<circle class="from" cx="868.0000" cy="118.0" r="6.0" fill="#FBF7EE" stroke="#6B7280" stroke-width="1.5"/>
+<circle class="to" cx="496.0000" cy="118.0" r="6.0" fill="#6B7280" stroke="#2C2A26" stroke-width="0.8"/>
+<text x="868.0" y="100.0" font-size="13" text-anchor="middle" fill="#6B655C" font-weight="normal" font-family='Franklin Gothic Medium, News Gothic, Helvetica Neue, sans-serif'>152</text>
+<text x="496.0" y="100.0" font-size="13" text-anchor="middle" fill="#2C2A26" font-weight="normal" font-family='Franklin Gothic Medium, News Gothic, Helvetica Neue, sans-serif'>62</text>
+</g>
+<g class="cd-row" id="cd-miller-parrott" data-row="miller-parrott">
+<text x="12.0" y="188.0" font-size="14" text-anchor="start" fill="#2C2A26" font-weight="normal">Miller-Parrott Lofts</text>
+<circle class="to" cx="248.00" cy="184.0" r="6.0" fill="#3F5C47" stroke="#2C2A26" stroke-width="0.9"/>
+<text x="248.0" y="166.0" font-size="13" text-anchor="middle" fill="#2C2A26" font-weight="normal" font-family='Franklin Gothic Medium, News Gothic, Helvetica Neue, sans-serif'>2</text>
+<text x="12.0" y="204.0" font-size="11" text-anchor="start" fill="#6B655C" font-weight="normal" font-family='Franklin Gothic Medium, News Gothic, Helvetica Neue, sans-serif'>promised n/a</text>
+</g>
+</svg>
+    
+  </div>
+  <p class="caption">CHI Overhead Doors reported 54 of 130 promised jobs; Govina&#x27;s 152 was a W-2 count, the actual average is 62.</p>
+  <p class="source">Source: <a href="https://vigoledger.org/h/2026-07-09-terre-haute-city-council-chi-overhead-doors-abatement">City council, Jul 9</a></p>
+  
+  
+  
+</section><section class="figure" id="data-table" data-type="data-table">
+  <p class="type">data-table</p>
+  <h2>This week&#x27;s appropriations</h2>
+  <div class="frame">
+    <table class="data-table"><thead><tr><th>Item</th><th>Body</th><th>Amount</th></tr></thead><tbody><tr><td>Building emergencies</td><td>Budget committee</td><td class="bar-cell"><span class="num">$520k</span><svg class="cell-bar" width="120" height="10" aria-hidden="true"><rect width="120.00" height="10" fill="#3F5C47"/></svg></td></tr><tr><td>Traffic study</td><td>Commissioners</td><td class="bar-cell"><span class="num">$469k</span><svg class="cell-bar" width="120" height="10" aria-hidden="true"><rect width="108.23" height="10" fill="#3F5C47"/></svg></td></tr><tr><td>Rescue truck</td><td>City Council</td><td class="bar-cell"><span class="num">$225k</span><svg class="cell-bar" width="120" height="10" aria-hidden="true"><rect width="51.92" height="10" fill="#3F5C47"/></svg></td></tr><tr><td>Plow</td><td>City Council</td><td class="bar-cell"><span class="num">$100k</span><svg class="cell-bar" width="120" height="10" aria-hidden="true"><rect width="23.08" height="10" fill="#3F5C47"/></svg></td></tr><tr><td>Warming center</td><td>City Council</td><td class="bar-cell"><span class="num">$47.5k</span><svg class="cell-bar" width="120" height="10" aria-hidden="true"><rect width="10.96" height="10" fill="#3F5C47"/></svg></td></tr><tr><td>Susie&#x27;s Place</td><td>City Council</td><td class="bar-cell"><span class="num">$45k</span><svg class="cell-bar" width="120" height="10" aria-hidden="true"><rect width="10.38" height="10" fill="#3F5C47"/></svg></td></tr></tbody></table><p class="note">Bar in the amount cell is a cell encoding. Money owns bar.</p>
+    
+  </div>
+  <p class="caption">Building-maintenance emergencies are the largest add in this edition, at $520,000.</p>
+  <p class="source">Source: <a href="https://vigoledger.org/">Vol. I No. 1, week of Aug 28</a></p>
+  
+  
+  
+</section><section class="figure" id="data-table-held" data-type="data-table">
+  <p class="type">data-table</p>
+  <h2>Budget lines held</h2>
+  <div class="frame">
+    <table class="data-table"><thead><tr><th>Department</th><th>Status</th></tr></thead><tbody><tr><td>Sheriff</td><td>Held</td></tr><tr><td>JJC</td><td>Held</td></tr><tr><td>Weights &amp; measures</td><td>Held</td></tr><tr><td>Tower</td><td>Held</td></tr><tr><td>Salaries</td><td>Held</td></tr></tbody></table>
+    
+  </div>
+  <p class="caption">Five department lines the budget committee held. Status is text; no mini-bar.</p>
+  <p class="source">Source: <a href="https://vigoledger.org/h/2026-08-13-vigo-county-budget-committee-recess-salaries-deferred">Budget committee, Aug 12–13</a></p>
+  
+  
+  
+</section><section class="figure category-mix" id="category-mix" data-type="stacked-bar">
+  <p class="type">stacked-bar</p>
+  <h2>Highlights by kind, Mar–Aug</h2>
+  <div class="frame">
+    <table class="data-table mix"><thead><tr><th>Month</th><th>MONEY</th><th>RULES</th><th>PROPERTY</th><th>DEFERRAL</th><th>FRICTION</th><th>n</th></tr></thead><tbody><tr><td>2026-03</td><td>1</td><td>2</td><td>2</td><td>2</td><td>1</td><td>8</td></tr><tr><td>2026-04</td><td>3</td><td>1</td><td>2</td><td>1</td><td>1</td><td>8</td></tr><tr><td>2026-05</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>4</td></tr><tr><td>2026-06</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>5</td></tr><tr><td>2026-07</td><td>6</td><td>0</td><td>1</td><td>1</td><td>2</td><td>10</td></tr><tr><td>2026-08</td><td>26</td><td>2</td><td>6</td><td>9</td><td>0</td><td>43</td></tr></tbody></table><p class="note">Money stacked-bar. Alias category-mix. FLAGGED is overlay 23/78, not a stack.</p>
+    <div class="legend" data-legend>
+<div class="item"><span class="swatch" style="background:#3F5C47"></span> MONEY</div>
+<div class="item"><span class="swatch" style="background:#C9A227"></span> RULES</div>
+<div class="item"><span class="swatch" style="background:#C45C26"></span> PROPERTY</div>
+<div class="item"><span class="swatch" style="background:#6B655C"></span> DEFERRAL</div>
+<div class="item"><span class="swatch" style="background:#7A8F4F"></span> FRICTION</div>
+</div>
+  </div>
+  <p class="caption">August carried 43 of this edition&#x27;s 78 highlights; 26 of those 43 are MONEY. 23 of 78 are flagged unverified — that badge is not a sixth stack.</p>
+  <p class="source">Source: <a href="https://vigoledger.org/">Vol. I No. 1 edition index</a></p>
+  
+  
+  
+</section><section class="figure per-body-count" id="per-body-count" data-type="bar">
+  <p class="type">bar</p>
+  <h2>Highlights by body</h2>
+  <div class="frame">
+    <table class="data-table"><thead><tr><th>Body</th><th>Highlights</th></tr></thead><tbody><tr><td>City Council</td><td>43</td></tr><tr><td>budget committee</td><td>16</td></tr><tr><td>Commissioners</td><td>10</td></tr><tr><td>County Council</td><td>8</td></tr><tr><td>BZA</td><td>1</td></tr></tbody></table><p class="note">Money bar. Alias per-body-count.</p>
+    
+  </div>
+  <p class="caption">City Council accounts for 43 of this edition&#x27;s 78 highlights; the Board of Zoning Appeals accounts for one.</p>
+  <p class="source">Source: <a href="https://vigoledger.org/">Vol. I No. 1 edition index</a></p>
+  
+  
+  
+</section>
+  </main>
+  <footer class="colophon">
+    Demo renderer <code>demos/render_composition.py</code>. Specs in
+    <code>06-composition.md</code>. Chrome locked in <code>00-editorial-chrome.md</code>.
+    Isotype paths are stand-ins; pack owned by Editorial Primitives.
+  </footer>
+</body>
+</html>

@@ -14,7 +14,7 @@ export function layoutGantt(spec: GanttSpec, theme: ThemeConfig, padding: number
   const titleOffset = spec.title ? 40 : 0;
 
   // Parse all dates to find global range
-  const allDates = spec.tasks.flatMap(t => [new Date(t.start), new Date(t.end)]);
+  const allDates = spec.tasks.flatMap(t => [new Date(t.start), new Date(t.end ?? t.start)]);
   const minDate = new Date(Math.min(...allDates.map(d => d.getTime())));
   const maxDate = new Date(Math.max(...allDates.map(d => d.getTime())));
   const totalDays = Math.max(1, (maxDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
@@ -59,7 +59,7 @@ export function layoutGantt(spec: GanttSpec, theme: ThemeConfig, padding: number
     }
 
     const startDays = (new Date(task.start).getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24);
-    const endDays = (new Date(task.end).getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24);
+    const endDays = (new Date(task.end ?? task.start).getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24);
     const x = chartLeft + (startDays / totalDays) * chartWidth;
     const width = Math.max(4, ((endDays - startDays) / totalDays) * chartWidth);
     const y = currentY;

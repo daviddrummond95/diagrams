@@ -1,0 +1,55 @@
+type: locator-map
+title: "This week's rezonings"
+caption: "Eight addresses the APC and council actually talked about."
+source:
+  label: "APC / City council, Vol. I No. 1"
+  href: "https://vigoledger.org/"
+legend:
+  - label: "Rezoning or site"
+    color: "#C45C26"
+
+basemap:
+  city: Terre Haute
+  county: Vigo
+  state: IN
+  center: { lon: -87.403, lat: 39.475 }
+
+pins:
+  - id: s7th-home
+    label: "908 S 7th"
+    lon: -87.40687
+    lat: 39.45724
+    note: "140-year-old home rezoning delayed (not the Lodge)"
+  - id: mason-lodge
+    label: "2215 Garfield"
+    lon: -87.39914
+    lat: 39.49361
+    note: "Former Mason Lodge, R → C"
+  - id: kent
+    label: "335 Kent"
+    lon: -87.38755
+    lat: 39.47206
+    note: "Duplex"
+  - id: fastenal
+    label: "1009 Poplar"
+    lon: -87.40188
+    lat: 39.46285
+    note: "Fastenal"
+  - id: fruitridge
+    label: "2722 S Fruitridge"
+    lon: -87.35993
+    lat: 39.44128
+    note: "Office rezoning"
+  - id: n12th
+    label: "3317 N 12th"
+    lon: -87.40041
+    lat: 39.50566
+  - id: fort-harrison
+    label: "1205 Fort Harrison"
+    lon: -87.39774
+    lat: 39.50658
+  - id: childrens-museum
+    label: "S 8th at Wabash"
+    lon: -87.40598
+    lat: 39.46621
+    note: "Children's Museum park"

@@ -1,0 +1,43 @@
+type: gantt
+title: "Zoning rewrite and sewer calendar"
+fyStartMonth: 1
+scale: auto
+caption: "Zoning rewrite announced May 7 as roughly 18 months — no voted end date. Sewer construction announced July 9 as the next several years / before 2030. Open bars fade forward; they do not stop on an invented date."
+source:
+  label: "City Council, May 7 · Chapter 10 zoning rewrite"
+  href: "https://www.vigoledger.org/h/2026-05-07-terre-haute-city-council-chapter-10-zoning-rewrite"
+alt: "HB1001 announced 2026-03-05. Zoning rewrite starts 2026-05-07, open, about 18 months, no end on the record. Sewer construction starts 2026-07-09, open. Wheel tax adopted 2026-07-09. Expected sewer rate ordinance 2026-09-03, unconfirmed."
+
+tasks:
+  - id: hb1001
+    label: "HB1001 announced"
+    kind: milestone
+    group: zoning
+    start: "2026-03-05"
+    href: "https://www.vigoledger.org/h/2026-03-05-terre-haute-city-council-zoning-code-update-hb1001"
+  - id: zoning
+    label: "Zoning code rewrite (~18 months)"
+    kind: range
+    open: true
+    group: zoning
+    start: "2026-05-07"
+    href: "https://www.vigoledger.org/h/2026-05-07-terre-haute-city-council-chapter-10-zoning-rewrite"
+  - id: sewer-build
+    label: "Sewer construction (next several years / before 2030)"
+    kind: range
+    open: true
+    group: sewer
+    start: "2026-07-09"
+    href: "https://www.vigoledger.org/h/2026-07-09-terre-haute-city-council-sewer-stormwater-rate-plan"
+  - id: sewer-expected
+    label: "Rate ordinance expected (unconfirmed)"
+    kind: milestone
+    expected: true
+    group: sewer
+    start: "2026-09-03"
+  - id: wheel-tax-adopted
+    label: "Wheel tax adopted"
+    kind: milestone
+    group: city-council
+    start: "2026-07-09"
+    href: "https://www.vigoledger.org/h/2026-07-09-terre-haute-city-council-wheel-tax-adopted"

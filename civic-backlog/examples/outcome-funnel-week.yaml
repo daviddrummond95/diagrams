@@ -1,0 +1,47 @@
+type: outcome-funnel
+title: "This week's outcomes"
+theme: default
+caption: "The week is a pile of deferred budget items, not a stack of final votes."
+source:
+  label: "The Vigo Ledger, Vol. I No. 1"
+  href: "https://vigoledger.org/"
+legend:
+  - { label: "Forwarded", pattern: solid }
+  - { label: "Deferred", pattern: solid }
+  - { label: "Recessed", pattern: hatch }
+  - { label: "Withdrawn" }
+alt: "Four bars whose widths equal 36 times the count: Forwarded 1 (36px), Deferred 5 (180px), Recessed 1 (36px), Withdrawn 1 (36px). Deferred is the week's pile."
+dataTable:
+  columns: [State, Count]
+  records:
+    - [Forwarded, 1]
+    - [Deferred, 5]
+    - [Recessed, 1]
+    - [Withdrawn, 1]
+
+stages:
+  - id: forwarded
+    label: "Forwarded"
+    state: forwarded
+    value: 1
+  - id: deferred
+    label: "Deferred"
+    state: deferred
+    value: 5
+  - id: recessed
+    label: "Recessed"
+    state: recessed
+    value: 1
+  - id: withdrawn
+    label: "Withdrawn"
+    state: withdrawn
+    value: 1
+items:
+  - { id: tax-office, label: "Tax-office pay grade", state: forwarded }
+  - { id: sheriff-12, label: "Sheriff's Office budget", state: deferred }
+  - { id: sheriff-13, label: "Sheriff's Office budget (held again)", state: deferred }
+  - { id: jjc, label: "Juvenile Justice Center", state: deferred }
+  - { id: weights, label: "Weights and measures", state: deferred }
+  - { id: s7th, label: "908 S 7th rezoning", state: deferred }
+  - { id: salaries, label: "Salaries / tower", state: recessed }
+  - { id: jail, label: "Jail-overcrowding ordinance", state: withdrawn }

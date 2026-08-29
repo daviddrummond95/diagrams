@@ -1,0 +1,25 @@
+type: impact
+title: "Jail-overcrowding ordinance, Aug 18"
+theme: default
+caption: "The jail-overcrowding ordinance was pulled without a vote; it would have touched county taxpayers and residents who have asked about the jail."
+source:
+  label: "County commissioners, Aug 18"
+  href: "https://vigoledger.org/"
+legend:
+  - { label: "Taxpayers", pattern: solid }
+  - { label: "Residents", pattern: hatch }
+alt: "A hub for the jail-overcrowding ordinance with two lines to county taxpayers and to residents who have asked commissioners about the jail."
+
+item:
+  id: jail-ordinance
+  label: "Jail-overcrowding ordinance"
+  body: "Vigo County Commissioners"
+  date: "2026-08-18"
+  action: "pulled / withdrawn, no vote"
+touches:
+  - id: taxpayers
+    label: "County taxpayers"
+    kind: taxpayers
+  - id: asked
+    label: "Residents who have asked commissioners about jail overcrowding"
+    kind: residents

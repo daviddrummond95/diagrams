@@ -1,0 +1,14 @@
+type: delta
+title: "Sewer rate, 2030"
+unit: percent
+caption: "Sewer bills are on track to rise 10% in 2030, plus a new $3-a-month stormwater fee."
+source:
+  label: "City council, Jul 9"
+  href: "https://vigoledger.org/"
+
+from:
+  label: "Current rate"
+  value: 0
+to:
+  label: "2030"
+  value: 10

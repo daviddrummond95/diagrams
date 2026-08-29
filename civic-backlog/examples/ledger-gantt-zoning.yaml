@@ -1,0 +1,58 @@
+type: gantt
+title: "Zoning rewrite and sewer horizon"
+fyStartMonth: 1
+scale: auto
+from: "2026-01-01"
+to: "2026-10-01"
+caption: "The zoning rewrite was announced May 7 as about 18 months with no calendar end; FY2026 on this header is a library default, not a Ledger word."
+source:
+  label: "City Council, Mar 5 / May 7 / Jul 9"
+  href: "https://www.vigoledger.org/h/2026-05-07-terre-haute-city-council-chapter-10-zoning-rewrite"
+alt: "HB1001 informational 2026-03-05. Zoning rewrite announced 2026-05-07, open-ended (about 18 months, no end date). Sewer construction announced 2026-07-09, open-ended. Wheel tax adopted 2026-07-09. Expected sewer-rate final 2026-09-03 is future."
+legend:
+  items:
+    - { label: "Range", symbol: bar, color: "#1e3a5f" }
+    - { label: "Milestone", symbol: diamond, color: "#1a1a1a" }
+    - { label: "Open / no end date", symbol: bar, color: "#1e3a5f" }
+    - { label: "Expected / unconfirmed", symbol: diamond, color: "#b8860b" }
+dataTable:
+  columns: [id, start, kind, open]
+  records:
+    - [hb1001, "2026-03-05", milestone, false]
+    - [zoning, "2026-05-07", range, true]
+    - [sewer-build, "2026-07-09", range, true]
+    - [wheel-tax-adopted, "2026-07-09", milestone, false]
+    - [sewer-rates-final, "2026-09-03", milestone, false]
+
+tasks:
+  - id: hb1001
+    label: "HB1001 clock stated"
+    kind: milestone
+    group: zoning
+    start: "2026-03-05"
+    href: "https://www.vigoledger.org/h/2026-03-05-terre-haute-city-council-zoning-code-update-hb1001"
+  - id: zoning
+    label: "Zoning code rewrite (about 18 months)"
+    kind: range
+    group: zoning
+    start: "2026-05-07"
+    open: true
+    href: "https://www.vigoledger.org/h/2026-05-07-terre-haute-city-council-chapter-10-zoning-rewrite"
+  - id: sewer-build
+    label: "Sewer construction (next several years)"
+    kind: range
+    group: sewer
+    start: "2026-07-09"
+    open: true
+    href: "https://www.vigoledger.org/h/2026-07-09-terre-haute-city-council-sewer-stormwater-rate-plan"
+  - id: wheel-tax-adopted
+    label: "Wheel tax adopted"
+    kind: milestone
+    group: city-council
+    start: "2026-07-09"
+    href: "https://www.vigoledger.org/h/2026-07-09-terre-haute-city-council-wheel-tax-adopted"
+  - id: sewer-rates-final
+    label: "Rate ordinance final (expected)"
+    kind: milestone
+    group: sewer
+    start: "2026-09-03"

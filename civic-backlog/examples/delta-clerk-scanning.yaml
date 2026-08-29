@@ -1,0 +1,14 @@
+type: delta
+title: "Clerk records scanning"
+unit: usd
+caption: "The clerk's scanning-project budget jumped from $9,000 to $109,000."
+source:
+  label: "County council, Aug 13"
+  href: "https://vigoledger.org/"
+
+from:
+  label: "Original line"
+  value: 9000
+to:
+  label: "Adopted"
+  value: 109000

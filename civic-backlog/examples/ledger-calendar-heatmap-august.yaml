@@ -1,0 +1,52 @@
+type: calendar-heatmap
+title: "August 2026 highlight density"
+from: "2026-08-01"
+to: "2026-08-31"
+weekStart: sun
+caption: "Commissioners skipped their regular Tuesday August 11 and called a special Wednesday 5pm session (inferred August 12) instead. August 12 has nine highlights, none of them a commissioners record."
+source:
+  label: "Commissioners, Aug 4 (announced)"
+  href: "https://www.vigoledger.org/h/2026-08-04-vigo-county-commissioners-special-wednesday-meeting-east-side-school"
+alt: "August 2026 highlight counts. 08-04:12, 08-06:8, 08-11:1 (County Council; commissioners regular cancelled), 08-12:9 (Wed 5pm inferred, no commissioners highlight), 08-13:7, 08-18:4, 08-24:1, 08-25:1. Other days 0."
+legend:
+  items:
+    - { label: "0 highlights", color: "#fbf7ee" }
+    - { label: "12 (busiest day)", color: "#1e3a5f" }
+dataTable:
+  columns: [date, value, label]
+  records:
+    - ["2026-08-04", 12, "Commissioners + County Sunshine"]
+    - ["2026-08-06", 8, "City Council (Thu)"]
+    - ["2026-08-11", 1, "County Council; commissioners regular cancelled"]
+    - ["2026-08-12", 9, "Wed 5pm special"]
+    - ["2026-08-13", 7, "Budget committee"]
+    - ["2026-08-18", 4, "Commissioners"]
+    - ["2026-08-24", 1, "Budget committee"]
+    - ["2026-08-25", 1, "Commissioners"]
+
+cells:
+  - date: "2026-08-04"
+    value: 12
+    label: "Commissioners + County Sunshine"
+    href: "https://www.vigoledger.org/h/2026-08-04-vigo-county-commissioners-special-wednesday-meeting-east-side-school"
+  - date: "2026-08-06"
+    value: 8
+    label: "City Council (Thu)"
+  - date: "2026-08-11"
+    value: 1
+    label: "County Council; commissioners regular cancelled"
+  - date: "2026-08-12"
+    value: 9
+    label: "Wed 5pm special"
+  - date: "2026-08-13"
+    value: 7
+    label: "Budget committee"
+  - date: "2026-08-18"
+    value: 4
+    label: "Commissioners"
+  - date: "2026-08-24"
+    value: 1
+    label: "Budget committee"
+  - date: "2026-08-25"
+    value: 1
+    label: "Commissioners"

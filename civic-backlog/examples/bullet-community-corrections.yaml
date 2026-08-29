@@ -1,0 +1,14 @@
+type: bullet
+title: "Community Corrections restored"
+unit: usd
+caption: "Council restored $200,000 to Community Corrections after the line was pulled by mistake."
+source:
+  label: "County council, this edition"
+  href: "https://vigoledger.org/"
+
+items:
+  - id: cc
+    label: "Community Corrections"
+    actual: 200000
+    target: 200000
+    ranges: [100000, 200000]

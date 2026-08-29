@@ -1,0 +1,24 @@
+type: donut
+title: "Ray Park roll call, Apr 2"
+theme: default
+caption: "Seven members were present and two were absent for the Ray Park vote."
+source:
+  label: "City council, Apr 2"
+  href: "https://vigoledger.org/"
+legend:
+  - { label: "Present", pattern: solid }
+  - { label: "Absent" }
+stat:
+  display: "7 present, 2 absent"
+alt: "A donut with two slices: present 7 of 9 (filled) and absent 2 of 9 (unfilled). Center text reads 7 present, 2 absent."
+dataTable:
+  columns: [Status, Count]
+  records:
+    - [Present, 7]
+    - [Absent, 2]
+
+slices:
+  - { id: present, label: "Present", value: 7 }
+  - { id: absent, label: "Absent", value: 2 }
+center:
+  label: "7 present, 2 absent"

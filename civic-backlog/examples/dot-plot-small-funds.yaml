@@ -1,0 +1,21 @@
+type: dot-plot
+title: "Smaller funds, same scale"
+unit: usd
+caption: "Plow, warming center, Susie's Place, and Make My Move sit within $60k of each other."
+source:
+  label: "This edition"
+  href: "https://vigoledger.org/"
+
+items:
+  - id: plow
+    label: "Plow"
+    value: 100000
+  - id: mmm
+    label: "Make My Move"
+    value: 87500
+  - id: warming
+    label: "Warming center"
+    value: 47500
+  - id: susie
+    label: "Susie's Place"
+    value: 45000

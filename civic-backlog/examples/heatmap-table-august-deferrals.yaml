@@ -1,0 +1,33 @@
+type: heatmap-table
+title: "August deferrals by body"
+theme: default
+unit: count
+caption: "August's deferrals sat on the county budget committee, not spread evenly across bodies."
+source:
+  label: "The Vigo Ledger, Vol. I No. 1"
+  href: "https://vigoledger.org/"
+legend:
+  - { label: "More deferrals", pattern: solid }
+  - { label: "Not recorded" }
+alt: "A 6-by-2 grid of bodies by August dates. Only the budget-committee cell for Aug 12–13 is filled, opacity 1, labeled 4. Other cells are empty with no zero."
+dataTable:
+  columns: [Body, Aug 12–13, Aug 18]
+  records:
+    - [Budget committee, 4, null]
+  summary: "Omitted cells are not recorded, not zero."
+
+rows:
+  - { id: city-council, label: "City Council" }
+  - { id: county-council, label: "County Council" }
+  - { id: commissioners, label: "Commissioners" }
+  - { id: budget-committee, label: "Budget committee" }
+  - { id: apc, label: "Area Plan Commission" }
+  - { id: bza, label: "Board of Zoning Appeals" }
+columns:
+  - { id: aug12-13, label: "Aug 12–13" }
+  - { id: aug18, label: "Aug 18" }
+cells:
+  - { row: budget-committee, column: aug12-13, value: 4, label: "4 deferred" }
+scale:
+  min: 0
+  max: 4

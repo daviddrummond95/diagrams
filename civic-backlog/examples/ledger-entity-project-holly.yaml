@@ -1,0 +1,30 @@
+type: entity-timeline
+title: "Project Holly"
+entity:
+  name: "Project Holly"
+  kind: project
+caption: "City Council heard a briefing on July 9 (no vote). Commissioners heard it August 4 and did not decide — City Council decides. No city vote in this edition. Investment figures differ across meetings; none plotted."
+source:
+  label: "City Council, Jul 9; Commissioners, Aug 4"
+  href: "https://www.vigoledger.org/h/2026-08-04-vigo-county-commissioners-project-holly-tax-abatement"
+alt: "2026-07-09 City Council EDC briefing, no vote. 2026-08-04 Commissioners, not decided; City Council decides. No city abatement vote in this edition."
+
+lanes:
+  - id: city
+    label: "City Council"
+  - id: commissioners
+    label: "Commissioners"
+
+events:
+  - date: "2026-07-09"
+    lane: city
+    label: "EDC briefing, no vote"
+    edition: "Vol. I No. 1"
+    description: "Project Holly preview. Formal request in the coming months. No abatement vote."
+    href: "https://www.vigoledger.org/h/2026-07-09-terre-haute-city-council-edc-project-holly"
+  - date: "2026-08-04"
+    lane: commissioners
+    label: "Not decided; City Council decides"
+    edition: "Vol. I No. 1"
+    description: "Partial, stepped abatement on real property only. Site inside Terre Haute. Final decision is City Council."
+    href: "https://www.vigoledger.org/h/2026-08-04-vigo-county-commissioners-project-holly-tax-abatement"

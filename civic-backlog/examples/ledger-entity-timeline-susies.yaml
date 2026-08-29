@@ -1,0 +1,44 @@
+type: entity-timeline
+title: "Susie's Place"
+unit: usd
+entity:
+  name: "Susie's Place"
+  kind: project
+caption: "County heard a $15,000 ask on August 4 and took no vote. City Council approved $45,000 from casino revenue two days later."
+source:
+  - label: "County Sunshine, Aug 4"
+    href: "https://www.vigoledger.org/h/2026-08-04-vigo-county-council-sunshine-susies-place-funding"
+  - label: "City Council, Aug 6"
+    href: "https://www.vigoledger.org/h/2026-08-06-terre-haute-city-council-appropriation-12-2026-susies-place"
+alt: "2026-08-04 County Council (Sunshine): $15,000 ask, no vote. 2026-08-06 City Council: Appropriation 12-2026, $45,000 casino revenue, voice vote."
+legend:
+  items:
+    - { label: "Ask, no vote", symbol: open-dot, color: "#b8860b" }
+    - { label: "Passed", symbol: dot, color: "#1e3a5f" }
+dataTable:
+  columns: [date, lane, label, amount]
+  records:
+    - ["2026-08-04", county, "$15,000 ask, no vote", 15000]
+    - ["2026-08-06", city, "$45,000 approved", 45000]
+
+lanes:
+  - id: county
+    label: "County Council"
+  - id: city
+    label: "City Council"
+
+events:
+  - date: "2026-08-04"
+    lane: county
+    label: "$15,000 ask, no vote"
+    amount: 15000
+    edition: "Vol. I No. 1"
+    href: "https://www.vigoledger.org/h/2026-08-04-vigo-county-council-sunshine-susies-place-funding"
+    description: "One-time bridge from county general. Presented; no vote."
+  - date: "2026-08-06"
+    lane: city
+    label: "$45,000 approved"
+    amount: 45000
+    edition: "Vol. I No. 1"
+    href: "https://www.vigoledger.org/h/2026-08-06-terre-haute-city-council-appropriation-12-2026-susies-place"
+    description: "Appropriation 12-2026, casino revenue, voice vote."

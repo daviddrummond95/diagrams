@@ -1,0 +1,32 @@
+type: choropleth
+title: "Wheel tax: city vs county"
+unit: usd
+caption: "Who pays the wheel tax depends on which side of the city limit the car is kept."
+source:
+  label: "County council, Jul 9"
+  href: "https://vigoledger.org/"
+legend:
+  title: "Wheel tax"
+  items:
+    - label: "City"
+      color: "#5B7C6A"
+    - label: "County (outside city)"
+      color: "#C45C26"
+
+basemap:
+  city: Terre Haute
+  county: Vigo
+  state: IN
+
+breaks: categorical
+valueKey: class
+
+features:
+  - id: county
+    label: "Vigo County"
+    geojson: geometries/vigo-county.geojson
+    value: county
+  - id: city
+    label: "Terre Haute"
+    geojson: geometries/terre-haute-city.geojson
+    value: city

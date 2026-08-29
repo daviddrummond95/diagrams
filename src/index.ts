@@ -1,11 +1,13 @@
 import type { AnyDiagramSpec, RenderOptions } from './types.js';
 import { validate } from './validate.js';
 import { renderDiagram, buildDiagramTree } from './render/index.js';
+import { cloneDiagramSpec } from './spec.js';
 
 export async function diagram(
   spec: AnyDiagramSpec,
   options: RenderOptions = {},
 ): Promise<string | Buffer> {
+  spec = cloneDiagramSpec(spec);
   // Defaults for flow type
   if (!spec.type || spec.type === 'flow') {
     const flowSpec = spec as import('./types.js').DiagramSpec;
@@ -28,6 +30,7 @@ export async function diagramTree(
   spec: AnyDiagramSpec,
   options: RenderOptions = {},
 ): Promise<{ tree: import('./types.js').SatoriElement; width: number; height: number }> {
+  spec = cloneDiagramSpec(spec);
   // Defaults for flow type
   if (!spec.type || spec.type === 'flow') {
     const flowSpec = spec as import('./types.js').DiagramSpec;
@@ -46,37 +49,8 @@ export async function diagramTree(
 export { renderDiagram, buildDiagramTree } from './render/index.js';
 export type { DiagramTreeResult } from './render/index.js';
 export { parseSpec } from './parse.js';
-export { validate } from './validate.js';
+export { validate, isSafeHref } from './validate.js';
 export { getTheme, defaultTheme, darkTheme } from './themes/index.js';
-export type {
-  DiagramSpec,
-  DiagramNode,
-  DiagramEdge,
-  DiagramGroup,
-  GroupStyleOverrides,
-  GroupLayout,
-  RenderOptions,
-  ThemeConfig,
-  NodeShape,
-  NodeVariant,
-  EdgeStyle,
-  Direction,
-  OutputFormat,
-  DiagramType,
-  AnyDiagramSpec,
-  GanttSpec,
-  GanttTask,
-  GanttLayoutResult,
-  GanttTheme,
-  TimelineSpec,
-  TimelineEvent,
-  TimelineLayoutResult,
-  TimelineTheme,
-  QuadrantSpec,
-  QuadrantAxis,
-  QuadrantDef,
-  QuadrantItem,
-  QuadrantLayoutResult,
-  QuadrantTheme,
-  SatoriElement,
-} from './types.js';
+export type * from './types.js';
+export { formatValue, CIVIC_ICON_STARTER, CIVIC_ICON_ISOTYPE } from './diagrams/civic/shared.js';
+export { parseISODate, positionOnAxis } from './diagrams/civic/index.js';

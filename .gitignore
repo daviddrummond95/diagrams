@@ -9,6 +9,7 @@ dist/
 bun.lock
 .DS_Store
 *.node
+/examples/civic-torture-gallery.html
 
 # Compiled CLI binaries
 /diagrams

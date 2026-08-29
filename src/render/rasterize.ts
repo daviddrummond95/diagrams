@@ -1,24 +1,17 @@
-import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
 import type { SatoriElement } from '../types.js';
-import { loadFonts } from '../fonts.js';
+import { renderToSvg } from './svg.js';
 
-export async function renderToSvg(
-  tree: SatoriElement,
-  width: number,
-  height: number,
-): Promise<string> {
-  const fonts = await loadFonts();
-  return await satori(tree as any, { width, height, fonts: fonts as any });
-}
+export { renderToSvg } from './svg.js';
 
 export async function renderToPng(
   tree: SatoriElement,
   width: number,
   height: number,
   scale: number = 2,
+  metadata?: { title?: string; alt?: string },
 ): Promise<Buffer> {
-  const svg = await renderToSvg(tree, width, height);
+  const svg = await renderToSvg(tree, width, height, metadata);
   const resvg = new Resvg(svg, {
     fitTo: { mode: 'width' as const, value: width * scale },
   });

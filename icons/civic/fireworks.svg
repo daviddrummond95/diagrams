@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="1.15" fill="currentColor" stroke="none"/>
+  <path d="M12 3.4v4"/>
+  <path d="M12 16.6v4"/>
+  <path d="M3.4 12h4"/>
+  <path d="M16.6 12h4"/>
+  <path d="M5.7 5.7l2.9 2.9"/>
+  <path d="M15.4 15.4l2.9 2.9"/>
+  <path d="M18.3 5.7l-2.9 2.9"/>
+  <path d="M8.6 15.4l-2.9 2.9"/>
+  <circle cx="12" cy="2.9" r="0.75" fill="currentColor" stroke="none"/>
+  <circle cx="12" cy="21.1" r="0.75" fill="currentColor" stroke="none"/>
+  <circle cx="2.9" cy="12" r="0.75" fill="currentColor" stroke="none"/>
+  <circle cx="21.1" cy="12" r="0.75" fill="currentColor" stroke="none"/>
+  <circle cx="5.2" cy="5.2" r="0.7" fill="currentColor" stroke="none"/>
+  <circle cx="18.8" cy="18.8" r="0.7" fill="currentColor" stroke="none"/>
+  <circle cx="18.8" cy="5.2" r="0.7" fill="currentColor" stroke="none"/>
+  <circle cx="5.2" cy="18.8" r="0.7" fill="currentColor" stroke="none"/>
+</svg>

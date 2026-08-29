@@ -7,8 +7,12 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js"
     }
   },
   "bin": {
@@ -21,17 +25,18 @@
     "scripts"
   ],
   "scripts": {
-    "postinstall": "node scripts/postinstall.mjs",
+    "setup:cloud-icons": "node scripts/postinstall.mjs",
     "dev": "bun run src/cli.ts",
     "build": "bun run build:sdk && bun run build:cli:js",
-    "build:sdk": "bun build ./src/index.ts --outdir ./dist --target node --external @resvg/resvg-js && tsc --emitDeclarationOnly",
-    "build:cli:js": "bun build ./src/cli.ts --outdir ./dist --target node --entry-naming cli.js --external @resvg/resvg-js",
+    "build:sdk": "bun build ./src/index.ts ./src/server.ts --outdir ./dist --target node --packages external && tsc --emitDeclarationOnly",
+    "build:cli:js": "bun build ./src/cli.ts --outdir ./dist --target node --entry-naming cli.js --packages external",
     "build:cli": "bun build ./src/cli.ts --compile --outfile diagrams",
     "build:cli:linux-x64": "bun build ./src/cli.ts --compile --target=bun-linux-x64 --outfile diagrams-linux-x64",
     "build:cli:linux-arm64": "bun build ./src/cli.ts --compile --target=bun-linux-arm64 --outfile diagrams-linux-arm64",
     "build:cli:darwin-x64": "bun build ./src/cli.ts --compile --target=bun-darwin-x64 --outfile diagrams-darwin-x64",
     "build:cli:darwin-arm64": "bun build ./src/cli.ts --compile --target=bun-darwin-arm64 --outfile diagrams-darwin-arm64",
     "build:cli:windows-x64": "bun build ./src/cli.ts --compile --target=bun-windows-x64 --outfile diagrams-windows-x64.exe",
+    "verify:package": "node scripts/verify-package.mjs",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
     "prepublishOnly": "bun run build"

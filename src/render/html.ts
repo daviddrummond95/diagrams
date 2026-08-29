@@ -1,9 +1,14 @@
-import type { SatoriElement, RenderOptions } from '../types.js';
+import type { CivicBase, SatoriElement, RenderOptions } from '../types.js';
+import { formatValue } from '../diagrams/civic/shared.js';
 
 /**
  * Serialize the Satori element tree to a standalone HTML file.
  */
-export function renderToHTML(tree: SatoriElement, options: RenderOptions = {}): string {
+export function renderToHTML(
+  tree: SatoriElement,
+  options: RenderOptions = {},
+  accessibility?: Pick<CivicBase, 'alt' | 'dataTable' | 'unit'>,
+): string {
   const isTransparent = options.background === 'transparent';
   const bodyBg = isTransparent ? 'transparent' : '#f1f5f9';
   return `<!DOCTYPE html>
@@ -22,12 +27,48 @@ export function renderToHTML(tree: SatoriElement, options: RenderOptions = {}): 
     background: ${bodyBg};
     font-family: 'Inter', system-ui, sans-serif;
   }
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
 </style>
 </head>
 <body>
 ${serializeElement(tree)}
+${serializeAccessibility(accessibility)}
 </body>
 </html>`;
+}
+
+function serializeAccessibility(accessibility?: Pick<CivicBase, 'alt' | 'dataTable' | 'unit'>): string {
+  if (!accessibility?.alt && !accessibility?.dataTable) return '';
+  const parts = ['<section class="visually-hidden" aria-label="Accessible diagram data">'];
+  if (accessibility.alt) parts.push(`<p>${escapeHtml(accessibility.alt)}</p>`);
+  if (accessibility.dataTable) {
+    const table = accessibility.dataTable;
+    if (table.summary) parts.push(`<p>${escapeHtml(table.summary)}</p>`);
+    parts.push('<table><thead><tr>');
+    for (const column of table.columns) parts.push(`<th scope="col">${escapeHtml(column)}</th>`);
+    parts.push('</tr></thead><tbody>');
+    for (const record of table.records) {
+      parts.push('<tr>');
+      for (const value of record) {
+        const display = typeof value === 'number' ? formatValue(value, accessibility.unit) : (value ?? '');
+        parts.push(`<td>${escapeHtml(String(display))}</td>`);
+      }
+      parts.push('</tr>');
+    }
+    parts.push('</tbody></table>');
+  }
+  parts.push('</section>');
+  return parts.join('');
 }
 
 function serializeElement(el: SatoriElement | string, indent: number = 0): string {

@@ -1,8 +1,22 @@
 #!/usr/bin/env python3
-"""Decode civic-backlog/demos/*.gz.b64 into the real demo files, then delete the payloads."""
+"""Stitch civic-backlog/demos/*.gz.b64.NN chunks, decode to real demo files, delete payloads."""
 import base64, gzip
+from collections import defaultdict
 from pathlib import Path
 root = Path(__file__).resolve().parent
+
+groups = defaultdict(list)
+for p in root.glob("*.gz.b64.*"):
+    base, idx = p.name.rsplit(".", 1)
+    if idx.isdigit():
+        groups[base].append((int(idx), p))
+for base, items in groups.items():
+    text = "".join(p.read_text() for _, p in sorted(items))
+    (root / base).write_text(text)
+    for _, p in items:
+        p.unlink()
+    print("stitched", base, len(text))
+
 for p in sorted(root.glob("*.gz.b64")):
     name = p.name[: -len(".gz.b64")]
     out = root / name
